@@ -1,0 +1,108 @@
+<!doctype html>
+<!--
+ This page is shown when the extension button is clicked, because the
+ "browser_action" field in manifest.json contains the "default_popup" key with
+ value "popup.html".
+ -->
+<html>
+  <head>
+    <title>GroupLister</title>
+    <style>
+      body {
+        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+        font-size: 100%;
+        min-width:300px;
+        padding: 10px;
+      }
+      .playlistInfo {
+        width: 400px;
+      }
+
+      legend {
+        margin-top: 20px;
+        padding-bottom: 5px;
+        width: 100%;
+
+      }
+
+      fieldset {
+
+      }
+
+      label, input, select, legend {
+        margin: 4px 0;
+      }
+
+      label {
+        margin-top: 12px;
+      }
+
+      label, select, legend {
+        display: block;
+      }
+
+      input[type="text"] {
+        padding: 5px;
+        font-size: 16px;
+      }
+
+      input[type="submit"] {
+        padding:15px 20px;
+        font-size: 16px;
+        background:white;
+        border:1px solid #ccc;
+        cursor:pointer;
+        -webkit-border-radius: 5px;
+        border-radius: 5px;
+        margin-top: 12px;
+      }
+
+      select {
+        display: block;
+      }
+    </style>
+
+    <!--
+      - JavaScript and HTML must be in separate files: see our Content Security
+      - Policy documentation[1] for details and explanation.
+      -
+      - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
+     -->
+    <script src="popup.js"></script>
+  </head>
+  <body>
+    <form class="playlistInfo">
+      <legend>
+        Please Select Grouplister Preferences
+      </legend>
+      <fieldset>
+        <label>Would you like to put these songs into an existing playlist?</label>
+        <input type="radio" name="existingPlaylist" value="yes"> Yes<br>
+        <input type="radio" name="existingPlaylist" value="no"> No<br>
+        <label for="oldPlaylist">What is the name of this playlist?</label>
+        <input type="text"/ placeholder="Music Playlist">
+        <label for="playlistName">Name of new playlist</label>
+        <input name="playlistName" type="text"/ placeholder="Music Playlist">
+        <label for="linkNumber">How many links would you like to add</label>
+        <select name="linkNumber">
+          <option>
+            5
+          </option>
+          <option>
+            10
+          </option>
+          <option>
+            20
+          </option>
+          <option>
+            30
+          </option>
+          <option>
+            40
+          </option>
+        </select>
+        <input type="submit" value="Let's Go"/>
+      </fieldset>
+    </form>
+  </body>
+</html>
