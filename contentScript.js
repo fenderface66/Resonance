@@ -4,13 +4,11 @@ var gatherURL = {
   videoID: [],
   IDGather: function() {
 
-    setTimeout(function() {
       console.log('function started');
-      console.log($('._li'));
       function extractVideoID(url){
         console.log('running');
         var regExp = url.match("v=([a-zA-Z0-9\_\-]+)&?")[1];
-        var videoID = '/watch?v=' + regExp
+        var videoID = '/watch?v=' + regExp;
         return videoID;
       }
       $('#contentCol #contentArea #pagelet_group_ .mtm').each(function(i){
@@ -20,11 +18,10 @@ var gatherURL = {
         gatherURL.videoID.push(extractVideoID(youtubeLink));
         console.log(this);
         console.log(gatherURL.videoID);
-      })
-    }, 6000)
+      });
 
 
   }
-}
+};
 
 gatherURL.IDGather();
