@@ -1,27 +1,32 @@
-
-
+(function($) {
 var gatherURL = {
   videoID: [],
   IDGather: function() {
-
       console.log('function started');
       function extractVideoID(url){
-        console.log('running');
-        var regExp = url.match("v=([a-zA-Z0-9\_\-]+)&?")[1];
-        var videoID = '/watch?v=' + regExp;
+        var matches = url.match("(youtu\.be\\?\/|v=)([a-zA-Z0-9\_\-]+)&?");
+        var regExp = '';
+        for (var i in matches) {
+          if (matches[i].match("^[a-zA-Z0-9\_\-]+$")) {
+            regExp = matches[i];
+            break;
+          }
+        }
+        console.log(regExp);
+        var videoID = regExp;
         return videoID;
       }
-      $('#contentCol #contentArea #pagelet_group_ .mtm').each(function(i){
-        $(this).find('._6m3 .mbs a').trigger('click');
-        var youtubeLink = $(this).find('._6m3 .mbs').html();
-        extractVideoID(youtubeLink);
-        gatherURL.videoID.push(extractVideoID(youtubeLink));
-        console.log(this);
-        console.log(gatherURL.videoID);
-      });
-
-
+      setTimeout(function() {
+        $('#contentCol #contentArea #pagelet_group_ .mtm').each(function(i){
+          var youtubeLink = $(this).find('._6m3 .mbs').html();
+          var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
+          if (checkYoutube == 'youtube.com') {
+            gatherURL.videoID.push(extractVideoID(youtubeLink));
+            console.log(gatherURL.videoID);
+          }
+        });
+      }, 6000);
   }
 };
-
 gatherURL.IDGather();
+})(jQuery);

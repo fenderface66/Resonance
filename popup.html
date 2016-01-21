@@ -46,7 +46,7 @@
         font-size: 16px;
       }
 
-      input[type="submit"] {
+      #button {
         padding:15px 20px;
         font-size: 16px;
         background:white;
@@ -69,6 +69,7 @@
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
      -->
     <script src="jquery-1.11.2.min.js"></script>
+    <script src="contentScript.js"></script>
     <script src="popup.js"></script>
   </head>
   <body>
@@ -102,7 +103,7 @@
             40
           </option>
         </select>
-        <input type="submit" value="Let's Go"/>
+        <div id="button">Let's Go</div>
       </fieldset>
     </form>
   </body>
