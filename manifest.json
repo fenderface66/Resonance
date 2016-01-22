@@ -1,21 +1,26 @@
 {
-  "manifest_version": 2,
-
-  "name": "groupLister",
-  "description": "Collects youtube urls and turns them into a playlist",
-  "version": "1.0",
-
-  "browser_action": {
-    "default_icon": "icon.png",
-    "default_popup": "popup.html"
-  },
-  "permissions": [
-    "tabs", "<all_urls>"
-  ],
-  "content_scripts": [
-    {
-      "matches": ["http://*/*","https://*/*"],
-      "js": ["jquery-1.11.2.min.js"]
-    }
-  ]
+	"manifest_version": 2,
+	"name": "groupLister",
+	"description": "Collects youtube urls and turns them into a playlist",
+	"version": "1.0",
+	"browser_action": {
+		"default_icon": "icon.png",
+		"default_popup": "popup.html"
+	},
+	"permissions": ["tabs", "<all_urls>", "https://www.youtube.com/*", "https://accounts.google.com/o/oauth2/token"],
+	"background": {
+		"page": "background.html",
+		"persistent": false
+	},
+	"content_scripts": [{
+		"matches": ["http://*/*", "https://*/*", "http://www.google.com/robots.txt*"],
+		"js": ["jquery-1.11.2.min.js", "oauth2.js"],
+    "run_at": "document_start"
+	}],
+  "oauth2": {
+    "client_id": "167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h.apps.googleusercontent.com",
+    "scopes": [
+      "https://www.googleapis.com/auth/drive"
+    ]
+  }
 }

@@ -79,12 +79,16 @@
       </legend>
       <fieldset>
         <label>Would you like to put these songs into an existing playlist?</label>
-        <input class="newPlaylist" type="radio" name="existingPlaylist" value="yes"> Yes<br>
-        <input class="newPlaylist" type="radio" name="existingPlaylist" value="no"> No<br>
-        <label for="oldPlaylist">What is the name of this playlist?</label>
-        <input name="oldPlaylist" type="text"/ placeholder="Music Playlist">
-        <label for="playlistName">Name of new playlist</label>
-        <input name="playlistName" type="text"/ placeholder="Music Playlist">
+        <input class="existingPlaylist" type="radio" name="existingPlaylist" value="yes"> Yes<br>
+        <input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> No<br>
+        <div class="existing">
+          <label for="oldPlaylist">What is the name of this playlist?</label>
+          <input name="oldPlaylist" type="text"/ placeholder="Music Playlist">
+        </div>
+        <div class="new">
+          <label for="playlistName">Name of new playlist</label>
+          <input name="playlistName" type="text"/ placeholder="Music Playlist">
+        </div>
         <label for="linkNumber">How many links would you like to add</label>
         <select name="linkNumber">
           <option>
@@ -101,6 +105,9 @@
           </option>
           <option>
             40
+          </option>
+          <option>
+            50
           </option>
         </select>
         <div id="go">Let's Go</div>
