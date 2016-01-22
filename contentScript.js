@@ -16,7 +16,6 @@ var gatherURL = {
         var videoID = regExp;
         return videoID;
       }
-      setTimeout(function() {
         $('#contentCol #contentArea #pagelet_group_ .mtm').each(function(i){
           var youtubeLink = $(this).find('._6m3 .mbs').html();
           var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
@@ -25,7 +24,6 @@ var gatherURL = {
             console.log(gatherURL.videoID);
           }
         });
-      }, 6000);
   }
 };
 gatherURL.IDGather();

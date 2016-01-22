@@ -46,7 +46,7 @@
         font-size: 16px;
       }
 
-      #button {
+      #go {
         padding:15px 20px;
         font-size: 16px;
         background:white;
@@ -79,10 +79,10 @@
       </legend>
       <fieldset>
         <label>Would you like to put these songs into an existing playlist?</label>
-        <input type="radio" name="existingPlaylist" value="yes"> Yes<br>
-        <input type="radio" name="existingPlaylist" value="no"> No<br>
+        <input class="newPlaylist" type="radio" name="existingPlaylist" value="yes"> Yes<br>
+        <input class="newPlaylist" type="radio" name="existingPlaylist" value="no"> No<br>
         <label for="oldPlaylist">What is the name of this playlist?</label>
-        <input type="text"/ placeholder="Music Playlist">
+        <input name="oldPlaylist" type="text"/ placeholder="Music Playlist">
         <label for="playlistName">Name of new playlist</label>
         <input name="playlistName" type="text"/ placeholder="Music Playlist">
         <label for="linkNumber">How many links would you like to add</label>
@@ -103,7 +103,7 @@
             40
           </option>
         </select>
-        <div id="button">Let's Go</div>
+        <div id="go">Let's Go</div>
       </fieldset>
     </form>
   </body>

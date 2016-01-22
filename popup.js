@@ -48,14 +48,47 @@ function getCurrentTabUrl(callback) {
  *   The callback gets a string that describes the failure reason.
  */
 var formHandler = {
+  numberofLinks: null,
+  existingPlaylist: false,
 	init: function init() {
-		chrome.tabs.executeScript({
-			file: 'contentScript.js'
-		});
+    $('input[name="oldPlaylist"]').hide();
+    $('input[name="playlistName]').hide();
+    $('input[type="radio"]').click(function(){
+      if ($('.newPlaylist[value="yes"]').is(":checked")) {
+        $('input[name="oldPlaylist"]').slideDown();
+        $('input[name="playlistName]').slideUp();
+      }
+      else {
+        $('input[name="oldPlaylist"]').slideUp();
+        $('input[name="playlistName"]').slideDown();
+      }
+    });
+    $('#go').on('click', function() {
+      formHandler.numberofLinks = $('option:selected').html();
+      formHandler.numberofLinks = parseInt(formHandler.numberofLinks);
+      if ($('.newPlaylist[value="yes"]').is(":checked")) {
+        formHandler.newPlaylist = true;
+        $('input[name="oldPlaylist"]').slideDown();
+        $('input[name="playlistName]').slideUp();
+      }
+      else {
+        formHandler.newPlaylist = false;
+        $('input[name="oldPlaylist"]').slideUp();
+        $('input[name="playlistName"]').slideDown();
+      }
+      console.log(formHandler.numberofLinks);
+      console.log(formHandler.newPlaylist);
+      console.log('clicked');
+      chrome.tabs.executeScript({
+  			file: 'contentScript.js'
+  		});
+
+    });
+
+
 	}
 };
 $(document).ready(function () {
-	console.log('hello');
 	getCurrentTabUrl(function (url) {});
-  document.getElementById('button').addEventListener('click', formHandler.init());
+  formHandler.init();
 });
