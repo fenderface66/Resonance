@@ -141,3 +141,35 @@ $(document).ready(function () {
 	getCurrentTabUrl(function (url) {});
 	formHandler.init();
 });
+
+// Get Uploads Playlist
+$.get(
+   "https://www.googleapis.com/youtube/v3/channels",{
+   part : 'contentDetails',
+   forUsername : 'TriangleMuslc',
+   key: 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4'},
+   function(data) {
+      $.each( data.items, function( i, item ) {
+          pid = item.contentDetails.relatedPlaylists.uploads;
+          getVids(pid);
+      });
+  }
+);
+
+//Get Videos
+function getVids(pid){
+    $.get(
+        "https://www.googleapis.com/youtube/v3/playlistItems",{
+        part : 'snippet',
+        maxResults : 20,
+        playlistId : pid,
+        key: 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4'},
+        function(data) {
+            var results;
+            $.each( data.items, function( i, item ) {
+                results = '<li>'+ item.snippet.title +'</li>';
+                $('#results').append(results);
+            });
+        }
+    );
+}
