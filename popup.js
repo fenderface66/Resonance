@@ -47,11 +47,55 @@ function getCurrentTabUrl(callback) {
  * @param {function(string)} errorCallback - Called when the image is not found.
  *   The callback gets a string that describes the failure reason.
  */
+
+var google = new OAuth2('google', {
+	client_id: '167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h',
+	client_secret: 'eXytPWFfS23UUAkQz8m4WTyu',
+	api_scope: 'https://www.googleapis.com/auth/youtube',
+});
+
+google.authorize(function () {});
+
 var formHandler = {
 	numberofLinks: null,
 	existingPlaylist: false,
 	existingName: '',
 	newName: '',
+	auth: function auth() {
+			console.log('running');
+			var TASK_CREATE_URL = 'https://www.googleapis.com/youtube/v3/playlists';
+	    // Make an XHR that creates the task
+
+	    var xhr = new XMLHttpRequest();
+			console.log(xhr.readyState);
+	    xhr.onreadystatechange = function(event) {
+				console.log(xhr.readyState);
+	      if (xhr.readyState == 4) {
+					console.log('here');
+	        if(xhr.status == 200) {
+						console.log('now here');
+	          // Great success: parse response with JSON
+	          var task = JSON.parse(xhr.responseText);
+	          // form.style.display = 'none';
+	          // success.style.display = 'block';
+
+	        } else {
+	          // Request failure: something bad happened
+	        }
+	      }
+	    };
+
+	    // var message = JSON.stringify({
+	    //   title: task
+	    // });
+
+	    xhr.open('POST', TASK_CREATE_URL, true);
+
+	    xhr.setRequestHeader('Content-Type', 'application/json');
+	    xhr.setRequestHeader('Authorization', 'OAuth ' + google.getAccessToken());
+
+	    // xhr.send(message);
+	  },
 	init: function init() {
 		$('.existing').hide();
 		$('.new').hide();
@@ -65,6 +109,7 @@ var formHandler = {
 			}
 		});
 		$('#go').on('click', function () {
+			formHandler.auth();
 			formHandler.numberofLinks = $('option:selected').html();
 			formHandler.numberofLinks = parseInt(formHandler.numberofLinks);
 			if($('.existingPlaylist[value="yes"]').is(":checked")) {

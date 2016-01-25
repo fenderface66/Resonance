@@ -23,7 +23,6 @@
 		videoID: [],
 		regexFunctions: {
 			topScroller: function topScroller(scrollNumber) {
-				console.log('working');
 				$("html, body").animate({
 					scrollTop: $(document).height()
 				}, 100);

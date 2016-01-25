@@ -20,7 +20,7 @@
  *
  * @param {String} adapterName  name of the adapter to use for this OAuth 2
  * @param {Object} config Containing clientId, clientSecret and apiScope
- * @param {String} config Alternatively, OAuth2.FINISH for the finish flow
+ * @param {String} config Alternatively, OAuth2.FINISH for the finish flow
  */
 var OAuth2 = function(adapterName, config) {
   this.adapterName = adapterName;

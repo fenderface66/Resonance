@@ -2,16 +2,30 @@
 <html>
 
 <head>
-  <script src="jquery-1.11.2.min.js"></script>
-  <script type="text/javascript" src="oauth2.js"></script>
-  <script type="text/javascript" src="chrome_ex_oauthsimple.js"></script>
-  <script type="text/javascript" src="chrome_ex_oauth.js"></script>
-  <script type="text/javascript" src="onload.js"></script>
-  <script src="background.js"></script>
-  <script src="contentScript.js"></script>
+  <title>My Uploads</title>
+  <style>
+    .paging-button {
+      visibility: hidden;
+    }
+
+    .button-container {
+      clear: both;
+    }
+  </style>
 </head>
 
 <body>
+  <div id="login-container" class="pre-auth">
+    This application requires access to your YouTube account. Please <a href="#" id="login-link">authorize</a> to continue.
+  </div>
+  <div id="video-container"></div>
+    <div class="button-container">
+      <button id="prev-button" class="paging-button" onclick="previousPage();">Previous Page</button>
+      <button id="next-button" class="paging-button" onclick="nextPage();">Next Page</button>
+  </div>
+  <script src="jquery-1.11.2.min.js"></script>
+  <script type="text/javascript" src="oauth2/oauth2.js"></script>
+  <script type="text/javascript" src="background.js"></script>
 </body>
 
 </html>
