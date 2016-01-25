@@ -70,6 +70,7 @@ var formHandler = {
 			console.log(xhr.readyState);
 	    xhr.onreadystatechange = function(event) {
 				console.log(xhr.readyState);
+				console.log(xhr.status);
 	      if (xhr.readyState == 4) {
 					console.log('here');
 	        if(xhr.status == 200) {
@@ -93,8 +94,7 @@ var formHandler = {
 
 	    xhr.setRequestHeader('Content-Type', 'application/json');
 	    xhr.setRequestHeader('Authorization', 'OAuth ' + google.getAccessToken());
-
-	    // xhr.send(message);
+	    xhr.send('');
 	  },
 	init: function init() {
 		$('.existing').hide();
