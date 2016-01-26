@@ -16,6 +16,8 @@
 	"permissions": [
 				"identity",
 				"tabs",
+				"storage",
+				"<all_urls>",
 				"http://gdata.youtube.com/",
         "https://www.googleapis.com/auth/youtube",
 				"https://accounts.google.com/o/oauth2/token"

@@ -32,6 +32,16 @@
 						console.log(scrollNumber);
 						gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
 						gatherURL.regexFunctions.findLink();
+					} else if(gatherURL.videoID.length == scrollNumber) {
+							console.log('running2');
+							// Save it using the Chrome extension storage API.
+							chrome.storage.sync.set({
+								'value': gatherURL.videoID
+							}, function () {
+								// Notify that we saved.
+								console.log('Settings saved');
+							});
+
 					}
 				}, 1000);
 			},
