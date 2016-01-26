@@ -1,52 +1,4 @@
-// Copyright (c) 2014 The Chromium Authors. All rights reserved.
-// Use of this source code is governed by a BSD-style license that can be
-// found in the LICENSE file.
-/**
- * Get the current URL.
- *
- * @param {function(string)} callback - called when the URL of the current tab
- *   is found.
- */
-function getCurrentTabUrl(callback) {
-	// Query filter to be passed to chrome.tabs.query - see
-	// https://developer.chrome.com/extensions/tabs#method-query
-	var queryInfo = {
-		active: true,
-		currentWindow: true
-	};
-	chrome.tabs.query(queryInfo, function (tabs) {
-		// chrome.tabs.query invokes the callback with a list of tabs that match the
-		// query. When the popup is opened, there is certainly a window and at least
-		// one tab, so we can safely assume that |tabs| is a non-empty array.
-		// A window can only have one active tab at a time, so the array consists of
-		// exactly one tab.
-		var tab = tabs[0];
-		// A tab is a plain object that provides information about the tab.
-		// See https://developer.chrome.com/extensions/tabs#type-Tab
-		var url = tab.url;
-		// tab.url is only available if the "activeTab" permission is declared.
-		// If you want to see the URL of other tabs (e.g. after removing active:true
-		// from |queryInfo|), then the "tabs" permission is required to see their
-		// "url" properties.
-		// console.assert(typeof url == 'string', 'tab.url should be a string');
-		callback(url);
-	});
-	// Most methods of the Chrome extension APIs are asynchronous. This means that
-	// you CANNOT do something like this:
-	//
-	// var url;
-	// chrome.tabs.query(queryInfo, function(tabs) {
-	//   url = tabs[0].url;
-	// });
-	// alert(url); // Shows "undefined", because chrome.tabs.query is async.
-}
-/**
- * @param {string} searchTerm - Search term for Google Image search.
- * @param {function(string,number,number)} callback - Called when an image has
- *   been found. The callback gets the URL, width and height of the image.
- * @param {function(string)} errorCallback - Called when the image is not found.
- *   The callback gets a string that describes the failure reason.
- */
+
 
 var google = new OAuth2('google', {
 	client_id: '167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h',
@@ -54,48 +6,13 @@ var google = new OAuth2('google', {
 	api_scope: 'https://www.googleapis.com/auth/youtube',
 });
 
-google.authorize(function () {});
+google.authorize(function() {});
 
 var formHandler = {
 	numberofLinks: null,
 	existingPlaylist: false,
 	existingName: '',
 	newName: '',
-	auth: function auth() {
-			console.log('running');
-			var TASK_CREATE_URL = 'https://www.googleapis.com/youtube/v3/playlists';
-	    // Make an XHR that creates the task
-
-	    var xhr = new XMLHttpRequest();
-			console.log(xhr.readyState);
-	    xhr.onreadystatechange = function(event) {
-				console.log(xhr.readyState);
-				console.log(xhr.status);
-	      if (xhr.readyState == 4) {
-					console.log('here');
-	        if(xhr.status == 200) {
-						console.log('now here');
-	          // Great success: parse response with JSON
-	          var task = JSON.parse(xhr.responseText);
-	          // form.style.display = 'none';
-	          // success.style.display = 'block';
-
-	        } else {
-	          // Request failure: something bad happened
-	        }
-	      }
-	    };
-
-	    // var message = JSON.stringify({
-	    //   title: task
-	    // });
-
-	    xhr.open('POST', TASK_CREATE_URL, true);
-
-	    xhr.setRequestHeader('Content-Type', 'application/json');
-	    xhr.setRequestHeader('Authorization', 'OAuth ' + google.getAccessToken());
-	    xhr.send('');
-	  },
 	init: function init() {
 		$('.existing').hide();
 		$('.new').hide();
@@ -109,7 +26,6 @@ var formHandler = {
 			}
 		});
 		$('#go').on('click', function () {
-			formHandler.auth();
 			formHandler.numberofLinks = $('option:selected').html();
 			formHandler.numberofLinks = parseInt(formHandler.numberofLinks);
 			if($('.existingPlaylist[value="yes"]').is(":checked")) {
@@ -137,39 +53,86 @@ var formHandler = {
 		});
 	}
 };
+
+// Define some variables used to remember state.
+ var playlistId, channelId;
+
+ // After the API loads, call a function to enable the playlist creation form.
+ function handleAPILoaded() {
+	enableForm();
+ }
+
+ // Enable the form for creating a playlist.
+ function enableForm() {
+	console.log('form enabled');
+ }
+
+ // Create a private playlist.
+ function createPlaylist() {
+	var request = gapi.client.youtube.playlists.insert({
+		part: 'snippet,status',
+		resource: {
+			snippet: {
+				title: 'Test1 Playlist',
+				description: 'A private playlist created with the YouTube API'
+			},
+			status: {
+				privacyStatus: 'private'
+			}
+		}
+	});
+	request.execute(function(response) {
+		var result = response.result;
+		if (result) {
+			playlistId = result.id;
+			console.log(playlistId);
+			console.log(result.snippet.title);
+			console.log(result.snippet.description);
+		} else {
+			console.log('Could not create playlist');
+		}
+	});
+ }
+
+ // Add a video ID specified in the form to the playlist.
+ function addVideoToPlaylist() {
+	console.log('031842');
+ }
+
+ // Add a video to a playlist. The "startPos" and "endPos" values let you
+ // start and stop the video at specific times when the video is played as
+ // part of the playlist. However, these values are not set in this example.
+ function addToPlaylist(id, startPos, endPos) {
+	var details = {
+		videoId: id,
+		kind: 'youtube#video'
+	}
+	if (startPos != undefined) {
+		details['startAt'] = startPos;
+	}
+	if (endPos != undefined) {
+		details['endAt'] = endPos;
+	}
+	var request = gapi.client.youtube.playlistItems.insert({
+		part: 'snippet',
+		resource: {
+			snippet: {
+				playlistId: playlistId,
+				resourceId: details
+			}
+		}
+	});
+	request.execute(function(response) {
+		$('.playlistInfo').append('<pre>' + JSON.stringify(response.result) + '</pre>');
+	});
+ }
+
+ function init() {
+	 gapi.client.setApiKey('AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4');
+	 gapi.client.load('youtube', 'v3').then(createPlaylist());
+ }
+
 $(document).ready(function () {
-	getCurrentTabUrl(function (url) {});
 	formHandler.init();
+	
 });
-
-// Get Uploads Playlist
-$.get(
-   "https://www.googleapis.com/youtube/v3/channels",{
-   part : 'contentDetails',
-   forUsername : 'TriangleMuslc',
-   key: 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4'},
-   function(data) {
-      $.each( data.items, function( i, item ) {
-          pid = item.contentDetails.relatedPlaylists.uploads;
-          getVids(pid);
-      });
-  }
-);
-
-//Get Videos
-function getVids(pid){
-    $.get(
-        "https://www.googleapis.com/youtube/v3/playlistItems",{
-        part : 'snippet',
-        maxResults : 20,
-        playlistId : pid,
-        key: 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4'},
-        function(data) {
-            var results;
-            $.each( data.items, function( i, item ) {
-                results = '<li>'+ item.snippet.title +'</li>';
-                $('#results').append(results);
-            });
-        }
-    );
-}
