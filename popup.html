@@ -5,80 +5,84 @@
  value "popup.html".
  -->
 <html>
-  <head>
-    <title>GroupLister</title>
-    <style>
-      body {
-        font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-        font-size: 100%;
-        min-width:300px;
-        padding: 10px;
-      }
-      .playlistInfo {
-        width: 400px;
-      }
 
-      legend {
-        margin-top: 20px;
-        padding-bottom: 5px;
-        width: 100%;
+<head>
+  <title>GroupLister</title>
+  <style>
+    body {
+      font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
+      font-size: 100%;
+      min-width: 300px;
+      padding: 10px;
+    }
 
-      }
+    .playlistInfo {
+      width: 400px;
+    }
 
-      fieldset {
+    legend {
+      margin-top: 20px;
+      padding-bottom: 5px;
+      width: 100%;
+    }
 
-      }
+    fieldset {}
 
-      label, input, select, legend {
-        margin: 4px 0;
-      }
+    label,
+    input,
+    select,
+    legend {
+      margin: 4px 0;
+    }
 
-      label {
-        margin-top: 12px;
-      }
+    label {
+      margin-top: 12px;
+    }
 
-      label, select, legend {
-        display: block;
-      }
+    label,
+    select,
+    legend {
+      display: block;
+    }
 
-      input[type="text"] {
-        padding: 5px;
-        font-size: 16px;
-      }
+    input[type="text"] {
+      padding: 5px;
+      font-size: 16px;
+    }
 
-      #go {
-        padding:15px 20px;
-        font-size: 16px;
-        background:white;
-        border:1px solid #ccc;
-        cursor:pointer;
-        -webkit-border-radius: 5px;
-        border-radius: 5px;
-        margin-top: 12px;
-      }
+    #go {
+      padding: 15px 20px;
+      font-size: 16px;
+      background: white;
+      border: 1px solid #ccc;
+      cursor: pointer;
+      -webkit-border-radius: 5px;
+      border-radius: 5px;
+      margin-top: 12px;
+    }
 
-      select {
-        display: block;
-      }
-    </style>
+    select {
+      display: block;
+    }
+  </style>
 
-    <!--
+  <!--
       - JavaScript and HTML must be in separate files: see our Content Security
       - Policy documentation[1] for details and explanation.
       -
       - [1]: https://developer.chrome.com/extensions/contentSecurityPolicy
      -->
 
-    <script src="https://apis.google.com/js/client.js?onload=init"></script>
-    <script src="oauth2/oauth2.js"></script>
-    <script src="jquery-1.11.2.min.js"></script>
-    <script src="contentScript.js"></script>
+  <script src="https://apis.google.com/js/client.js?onload=init"></script>
+  <script src="oauth2/oauth2.js"></script>
+  <script src="jquery-1.11.2.min.js"></script>
+  <script src="contentScript.js"></script>
+  <script src="popup.js"></script>
 
-    <script src="popup.js"></script>
+</head>
 
-  </head>
-  <body>
-    <form class="playlistInfo">
+<body>
+  <!-- <form class="playlistInfo">
       <legend>
         Please Select Grouplister Preferences
       </legend>
@@ -117,7 +121,28 @@
         </select>
         <div id="go">Let's Go</div>
       </fieldset>
-    </form>
-    <ul id="results"></ul>
-  </body>
+    </form> -->
+  <!-- <ul id="results"></ul> -->
+
+  <head>
+    <title>OAuth 2.0 Popup</title>
+    <script src="oauth2/oauth2.js"></script>
+    <script src="popup.js"></script>
+    <style>
+      #success {
+        display: none;
+      }
+    </style>
+  </head>
+
+  <form id="form">
+    <input id="input" placeholder="New task name..."></input>
+    <input id="button" type="submit" value="Create task" />
+  </form>
+  <div id="success">
+    Successfully created new task with ID
+    <span id="taskid"></span>.
+  </div>
+</body>
+
 </html>
