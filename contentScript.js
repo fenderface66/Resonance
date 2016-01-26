@@ -31,7 +31,7 @@
 						console.log('running second');
 						console.log(scrollNumber);
 						gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
-						gatherURL.regexFunctions.findLink();
+						gatherURL.regexFunctions.findLink(0);
 					} else if(gatherURL.videoID.length == scrollNumber) {
 							console.log('running2');
 							// Save it using the Chrome extension storage API.
@@ -58,21 +58,27 @@
 				var videoID = regExp;
 				return videoID;
 			},
-			findLink: function findLink() {
-				$('#contentCol #contentArea #pagelet_group_ .mtm').each(function (i) {
+			findLink: function findLink(startIndex) {
+				$('#contentCol #contentArea #pagelet_group_ .mtm').each(function(i) {
 					var youtubeLink = $(this).find('._6m3 .mbs').html();
 					var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
+					var counter = startIndex;
+					console.log(i);
+					console.log(startIndex);
 					if(checkYoutube == 'youtube.com') {
 						if((gatherURL.videoID.length) < gatherURL.receivedData.numberofLinks) {
+							if (i == startIndex) {
+							startIndex++;
 							gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(youtubeLink));
 							console.log(gatherURL.videoID.length);
+							}
 						}
 					}
 				});
 			}
 		},
 		init: function () {
-			gatherURL.regexFunctions.findLink();
+			gatherURL.regexFunctions.findLink(0);
 		}
 	};
 	gatherURL.receivedData.request();
