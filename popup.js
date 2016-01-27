@@ -156,6 +156,9 @@ var formHandler = {
 											},
 											error: function (serverResponse) {
 												current++;
+                        $('.failed-uploads').show();
+                        $('.failed-uploads ul').append("<li>" + ajaxes[current]['snippet']['resourceId']['videoId'] + "</li>");
+                        console.log(serverResponse);
 												if(current == (ajaxes.length - 1)) {
 													$('.loader-running').css({
 														'width': 294
