@@ -34,121 +34,119 @@ var formHandler = {
 			}
 		});
 		$('#go').on('click', function () {
-			formHandler.numberofLinks = $('option:selected').html();
-			formHandler.numberofLinks = parseInt(formHandler.numberofLinks);
-			if($('.existingPlaylist[value="yes"]').is(":checked")) {
-				formHandler.existingPlaylist = true;
-			} else {
-				formHandler.existingPlaylist = false;
-			}
-			formHandler.existingName = $('input[name="oldPlaylist"]').val();
-			formHandler.newName = $('input[name="playlistName"]').val();
-			chrome.tabs.query({
-				active: true,
-				currentWindow: true
-			}, function (tab) {
-				//Be aware that `tab` is an array of Tabs
-				console.log(tab[0].url);
-				formHandler.validFBurl(tab[0].url);
-			});
-			chrome.runtime.onConnect.addListener(function (port) {
-				port.postMessage({
-					numberofLinks: formHandler.numberofLinks,
-					existingPlaylist: formHandler.existingPlaylist,
-					newName: formHandler.newName,
-					existingName: formHandler.existingName
+			google.authorize(function () {
+				formHandler.numberofLinks = $('option:selected').html();
+				formHandler.numberofLinks = parseInt(formHandler.numberofLinks);
+				if($('.existingPlaylist[value="yes"]').is(":checked")) {
+					formHandler.existingPlaylist = true;
+				} else {
+					formHandler.existingPlaylist = false;
+				}
+				formHandler.existingName = $('input[name="oldPlaylist"]').val();
+				formHandler.newName = $('input[name="playlistName"]').val();
+				(function () {
+					//make the AJAX request with the given data from the `ajaxes` array of objects
+					var accessToken = google.getAccessToken();
+					var metadata = {
+						snippet: {
+							title: formHandler.newName
+						}
+					};
+					$.ajax({
+						method: "POST",
+						url: "https://www.googleapis.com/youtube/v3/playlists?part=snippet",
+						data: JSON.stringify(metadata),
+						headers: {
+							Authorization: 'Bearer ' + accessToken
+						},
+						contentType: 'application/json',
+					}).done(function (data, textStatus, request) {
+						console.log("Playlist created, data: ", data, request);
+						formHandler.newPlaylistID = data.id;
+						console.log(formHandler.newPlaylistID);
+					});
+				})();
+				chrome.tabs.query({
+					active: true,
+					currentWindow: true
+				}, function (tab) {
+					//Be aware that `tab` is an array of Tabs
+					console.log(tab[0].url);
+					formHandler.validFBurl(tab[0].url);
 				});
-			});
-			chrome.storage.onChanged.addListener(function (changes, namespace) {
-				console.log("change received!");
-			});
-			setTimeout(function () {
-				chrome.storage.local.get('value', function (obj) {
-					console.log('value', obj);
-					formHandler.idArray = obj.value;
-					console.log(formHandler.idArray);
-					google.authorize(function () {
-						(function () {
-							//make the AJAX request with the given data from the `ajaxes` array of objects
-							var accessToken = google.getAccessToken();
-							var metadata = {
-								snippet: {
-									title: formHandler.newName
-								}
-							};
-							$.ajax({
-								method: "POST",
-								url: "https://www.googleapis.com/youtube/v3/playlists?part=snippet",
-								data: JSON.stringify(metadata),
-								headers: {
-									Authorization: 'Bearer ' + accessToken
-								},
-								contentType: 'application/json',
-							}).done(function (data, textStatus, request) {
-								console.log("Playlist created, data: ", data, request);
-								formHandler.newPlaylistID = data.id;
-								console.log(formHandler.newPlaylistID);
-							});
-						})();
-						setTimeout(function () {
-              console.log('running list insert');
-							(function () {
-								//setup an array of AJAX options, each object is an index that will specify information for a single AJAX request
-								var ajaxes = [],
-									current = 0;
-								(function ajaxArray() {
-									for(var i = 0; i < formHandler.idArray.length; i++) {
-										var accessToken = google.getAccessToken();
-										var metadata = {
-											snippet: {
-												playlistId: formHandler.newPlaylistID,
-												resourceId: {
-													kind: "youtube#video",
-													videoId: formHandler.idArray[i]
-												},
-											}
-										};
-										console.log(formHandler.idArray[i]);
-										ajaxes.push(metadata);
-									}
-								})();
-								//declare your function to run AJAX requests
-								function do_ajax() {
-									console.log(ajaxes[current].snippet.resourceId.videoId);
-									//check to make sure there are more requests to make
-									if(current < ajaxes.length) {
-										console.log(ajaxes[current]);
-										var accessToken = google.getAccessToken();
-										//make the AJAX request with the given data from the `ajaxes` array of objects
-										$.ajax({
-											method: "POST",
-											url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet",
-											data: JSON.stringify(ajaxes[current]),
-											headers: {
-												Authorization: 'Bearer ' + accessToken
-											},
-											contentType: 'application/json',
-											success: function (serverResponse) {
-												//increment the `current` counter and recursively call this function again
-												current++;
-												do_ajax();
-											},
-                      error: function (serverResponse) {
-                        current++;
-												do_ajax();
-                      }
-										}).done(function (data, textStatus, request) {
-											console.log("Song added, data: ", data, request);
-										});
-									}
-								}
-								//run the AJAX function for the first time once `document.ready` fires
-								do_ajax();
-							})();
-						}, 5000);
+				chrome.runtime.onConnect.addListener(function (port) {
+					port.postMessage({
+						numberofLinks: formHandler.numberofLinks,
+						existingPlaylist: formHandler.existingPlaylist,
+						newName: formHandler.newName,
+						existingName: formHandler.existingName
 					});
 				});
-			}, 20000);
+				chrome.storage.onChanged.addListener(function (changes, namespace) {
+					console.log("change received!");
+				});
+				setTimeout(function () {
+					chrome.storage.local.get('value', function (obj) {
+						console.log('value', obj);
+						formHandler.idArray = obj.value;
+						console.log(formHandler.idArray);
+						console.log('running list insert');
+						(function () {
+							//setup an array of AJAX options, each object is an index that will specify information for a single AJAX request
+							var ajaxes = [],
+								current = 0;
+							(function ajaxArray() {
+								for(var i = 0; i < formHandler.idArray.length; i++) {
+									var accessToken = google.getAccessToken();
+									var metadata = {
+										snippet: {
+											playlistId: formHandler.newPlaylistID,
+											resourceId: {
+												kind: "youtube#video",
+												videoId: formHandler.idArray[i]
+											},
+										}
+									};
+									console.log(formHandler.idArray[i]);
+									ajaxes.push(metadata);
+								}
+							})();
+							//declare your function to run AJAX requests
+							function do_ajax() {
+								console.log(ajaxes[current].snippet.resourceId.videoId);
+								//check to make sure there are more requests to make
+								if(current < ajaxes.length) {
+									console.log(ajaxes[current]);
+									var accessToken = google.getAccessToken();
+									//make the AJAX request with the given data from the `ajaxes` array of objects
+									$.ajax({
+										method: "POST",
+										url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet",
+										data: JSON.stringify(ajaxes[current]),
+										headers: {
+											Authorization: 'Bearer ' + accessToken
+										},
+										contentType: 'application/json',
+										success: function (serverResponse) {
+											//increment the `current` counter and recursively call this function again
+											current++;
+											do_ajax();
+										},
+										error: function (serverResponse) {
+											current++;
+											do_ajax();
+										}
+									}).done(function (data, textStatus, request) {
+										console.log("Song added, data: ", data, request);
+									});
+								}
+							}
+							//run the AJAX function for the first time once `document.ready` fires
+							do_ajax();
+						})();
+					});
+				}, 10000);
+			});
 		});
 	}
 };
