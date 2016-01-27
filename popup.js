@@ -33,8 +33,10 @@ var formHandler = {
 				console.log('else');
 				$('.new').slideDown();
 				$('.existing').slideUp();
-
 			}
+		});
+		$('.explain').click(function() {
+			$('.explanation').slideToggle();
 		});
 		$('#go').on('click', function () {
 

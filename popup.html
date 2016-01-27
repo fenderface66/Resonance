@@ -127,6 +127,26 @@
       display: none;
     }
 
+    .explain {
+      display: inline-block;
+      font-size: 0.7em;
+      border: 1px solid black;
+      border-radius: 50%;
+      padding: 5px 8px;
+      cursor: pointer;
+      margin-left: 3px;
+      position: relative;
+      bottom: 2px;
+    }
+
+    .explanation {
+      display: none;
+    }
+
+    .explain-header {
+      text-decoration: underline;
+      font-weight: bold;
+    }
 
   </style>
 
@@ -167,6 +187,11 @@
       <div class="existing">
         <label for="oldPlaylist">What is the ID of this playlist?</label>
         <input name="oldPlaylist" type="text" / placeholder="Music Playlist">
+        <span class="explain">?</span>
+        <div class="explanation">
+          <p>You can find your playlist ID by going to the playlist page on youtube and extracting it from the url</p>
+          <p><span class="explain-header">Example</span> <br><br> https://www.youtube.com/playlist?list=<strong>PLLE1K_p2t-JKUfeaaPCXqu8idT3wsOv4C</strong></p>
+        </div>
       </div>
       <div class="new">
         <label for="playlistName">Name of new playlist</label>
