@@ -1,5 +1,4 @@
 (function ($) {
-	//This line opens up a long-lived connection to your background page.
 	var gatherURL = {
 		receivedData: {
 			numberofLinks: null,
@@ -29,19 +28,17 @@
 				setTimeout(function () {
 					if(gatherURL.videoID.length < scrollNumber) {
 						console.log('running second');
-						console.log(scrollNumber);
 						gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
-						gatherURL.regexFunctions.findLink(0);
+						gatherURL.regexFunctions.findLink();
 					} else if(gatherURL.videoID.length == scrollNumber) {
-							console.log('running2');
-							// Save it using the Chrome extension storage API.
-							chrome.storage.sync.set({
-								'value': gatherURL.videoID
-							}, function () {
-								// Notify that we saved.
-								console.log('Settings saved');
-							});
-
+						console.log(gatherURL.videoID);
+						// Save it using the Chrome extension storage API.
+						chrome.storage.local.set({
+							'value': gatherURL.videoID
+						}, function () {
+							// Notify that we saved.
+							console.log('Settings saved');
+						});
 					}
 				}, 1000);
 			},
@@ -54,38 +51,36 @@
 						break;
 					}
 				}
-				console.log(regExp);
 				var videoID = regExp;
 				return videoID;
 			},
-			findLink: function findLink(startIndex) {
-				$('#contentCol #contentArea #pagelet_group_ .mtm').each(function(i) {
+			findLink: function findLink() {
+				$('#contentCol #contentArea #pagelet_group_ .mtm').each(function (i) {
 					var youtubeLink = $(this).find('._6m3 .mbs').html();
 					var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
-					var counter = startIndex;
-					console.log(i);
-					console.log(startIndex);
 					if(checkYoutube == 'youtube.com') {
 						if((gatherURL.videoID.length) < gatherURL.receivedData.numberofLinks) {
-							if (i == startIndex) {
-							startIndex++;
-							gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(youtubeLink));
+							//
 							console.log(gatherURL.videoID.length);
+							var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(youtubeLink), gatherURL.videoID);
+							if(found >= 0) {
+								// Element was found, remove it.
+								gatherURL.videoID.splice(found, 1);
+							} else {
+								// Element was not found, add it.
+								if(gatherURL.regexFunctions.extractVideoID(youtubeLink) !== "") {
+									gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(youtubeLink));
+									console.log(gatherURL.regexFunctions.extractVideoID(youtubeLink));
+								}
 							}
 						}
 					}
 				});
 			}
 		},
-		init: function () {
-			gatherURL.regexFunctions.findLink(0);
-		}
 	};
 	gatherURL.receivedData.request();
 	setTimeout(function () {
 		gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
 	}, 10);
-	setTimeout(function () {
-		gatherURL.init();
-	}, 100);
 })(jQuery);
