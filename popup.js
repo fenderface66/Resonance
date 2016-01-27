@@ -132,7 +132,11 @@ var formHandler = {
 												//increment the `current` counter and recursively call this function again
 												current++;
 												do_ajax();
-											}
+											},
+                      error: function (serverResponse) {
+                        current++;
+												do_ajax();
+                      }
 										}).done(function (data, textStatus, request) {
 											console.log("Song added, data: ", data, request);
 										});
