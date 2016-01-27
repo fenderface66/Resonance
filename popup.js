@@ -34,8 +34,14 @@ var formHandler = {
 			}
 		});
 		$('#go').on('click', function () {
-      $('.loader-container').fadeIn();
+			$('.loader-container').fadeIn();
 			google.authorize(function () {
+				chrome.storage.local.clear(function () {
+					var error = chrome.runtime.lastError;
+					if(error) {
+						console.error(error);
+					}
+				});
 				formHandler.numberofLinks = $('option:selected').html();
 				formHandler.numberofLinks = parseInt(formHandler.numberofLinks);
 				if($('.existingPlaylist[value="yes"]').is(":checked")) {
@@ -85,102 +91,103 @@ var formHandler = {
 				});
 				chrome.storage.onChanged.addListener(function (changes, namespace) {
 					console.log("change received!");
-				});
-				setTimeout(function () {
-					chrome.storage.local.get('value', function (obj) {
-						console.log('value', obj);
-						formHandler.idArray = obj.value;
-						console.log(formHandler.idArray);
-						console.log('running list insert');
-						(function () {
-							//setup an array of AJAX options, each object is an index that will specify information for a single AJAX request
-							var ajaxes = [],
-								current = 0;
-							(function ajaxArray() {
-								for(var i = 0; i < formHandler.idArray.length; i++) {
-									var accessToken = google.getAccessToken();
-									var metadata = {
-										snippet: {
-											playlistId: formHandler.newPlaylistID,
-											resourceId: {
-												kind: "youtube#video",
-												videoId: formHandler.idArray[i]
+					setTimeout(function () {
+						chrome.storage.local.get('value', function (obj) {
+							console.log('value', obj);
+							formHandler.idArray = obj.value;
+							console.log(obj.value.length);
+							console.log(formHandler.idArray);
+							console.log('running list insert');
+							(function () {
+								//setup an array of AJAX options, each object is an index that will specify information for a single AJAX request
+								var ajaxes = [],
+									current = 0;
+								(function ajaxArray() {
+									for(var i = 0; i < formHandler.idArray.length; i++) {
+										var accessToken = google.getAccessToken();
+										var metadata = {
+											snippet: {
+												playlistId: formHandler.newPlaylistID,
+												resourceId: {
+													kind: "youtube#video",
+													videoId: formHandler.idArray[i]
+												},
+											}
+										};
+										console.log(formHandler.idArray[i]);
+										ajaxes.push(metadata);
+									}
+								})();
+								//declare your function to run AJAX requests
+								function do_ajax() {
+									console.log(ajaxes[current].snippet.resourceId.videoId);
+									//check to make sure there are more requests to make
+									if(current < ajaxes.length) {
+										console.log(ajaxes[current]);
+										var accessToken = google.getAccessToken();
+										var percentage = current / ajaxes.length;
+										//make the AJAX request with the given data from the `ajaxes` array of objects
+										$.ajax({
+											method: "POST",
+											url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet",
+											data: JSON.stringify(ajaxes[current]),
+											headers: {
+												Authorization: 'Bearer ' + accessToken
 											},
-										}
-									};
-									console.log(formHandler.idArray[i]);
-									ajaxes.push(metadata);
+											contentType: 'application/json',
+											success: function (serverResponse) {
+												//increment the `current` counter and recursively call this function again
+												current++;
+												$('.loader-running').css({
+													'width': (294 * percentage)
+												});
+												if(current == (ajaxes.length - 1)) {
+													$('.loader-running').css({
+														'width': 294
+													});
+													console.log('if');
+												} else {
+													$('.loader-running').css({
+														'width': (294 * percentage)
+													});
+													console.log('else');
+												}
+												do_ajax();
+											},
+											error: function (serverResponse) {
+												current++;
+												if(current == (ajaxes.length - 1)) {
+													$('.loader-running').css({
+														'width': 294
+													});
+													console.log('if');
+												} else {
+													$('.loader-running').css({
+														'width': (294 * percentage)
+													});
+													console.log('else');
+												}
+												do_ajax();
+											}
+										}).done(function (data, textStatus, request) {
+											console.log("Song added, data: ", data, request);
+											if(current == (ajaxes.length - 2)) {
+												$('.loader-running').css({
+													'width': 294
+												});
+												$('.loader').removeClass('loader-running');
+												$('.loader-container').fadeOut();
+												$('.success-message').fadeIn('fast');
+											}
+										});
+									}
 								}
+								//run the AJAX function for the first time once `document.ready` fires
+								do_ajax();
 							})();
-							//declare your function to run AJAX requests
-							function do_ajax() {
-								console.log(ajaxes[current].snippet.resourceId.videoId);
-								//check to make sure there are more requests to make
-								if(current < ajaxes.length) {
-									console.log(ajaxes[current]);
-									var accessToken = google.getAccessToken();
-									var percentage = current / ajaxes.length;
-									//make the AJAX request with the given data from the `ajaxes` array of objects
-									$.ajax({
-										method: "POST",
-										url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet",
-										data: JSON.stringify(ajaxes[current]),
-										headers: {
-											Authorization: 'Bearer ' + accessToken
-										},
-										contentType: 'application/json',
-										success: function (serverResponse) {
-											//increment the `current` counter and recursively call this function again
-											current++;
-											$('.loader-running').css({
-												'width': (294 * percentage)
-											});
-											if(current == (ajaxes.length - 1)) {
-												$('.loader-running').css({
-													'width': 294
-												});
-												console.log('if');
-											} else {
-												$('.loader-running').css({
-													'width': (294 * percentage)
-												});
-												console.log('else');
-											}
-											do_ajax();
-										},
-										error: function (serverResponse) {
-											current++;
-											if(current == (ajaxes.length - 1)) {
-												$('.loader-running').css({
-													'width': 294
-												});
-												console.log('if');
-											} else {
-												$('.loader-running').css({
-													'width': (294 * percentage)
-												});
-												console.log('else');
-											}
-											do_ajax();
-										}
-									}).done(function (data, textStatus, request) {
-										console.log("Song added, data: ", data, request);
-										if(current == (ajaxes.length - 2)) {
-											$('.loader-running').css({
-												'width': 294
-											});
-											$('.loader').removeClass('loader-running');
-                      $('.loader-container').fadeOut();
-                      $('.success-message').fadeIn('fast');
-										}
-									});
-								}
-							}
-							//run the AJAX function for the first time once `document.ready` fires
-							do_ajax();
-						})();
-					});
-				}, 600);
+						});
+					}, 600);
+				});
 			});
 		});
 	}
