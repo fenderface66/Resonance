@@ -59,6 +59,8 @@
       -webkit-border-radius: 5px;
       border-radius: 5px;
       margin-top: 12px;
+      width: 62px;
+
     }
 
     select {
@@ -93,6 +95,39 @@
       display: none;
     }
 
+    .scanner-loader-container {
+      width: 100%;
+      text-align: center;
+      display: none;
+
+    }
+
+    .linkNumber
+
+    .scanner-loader {
+      margin: 0 auto;
+      position: relative;
+      left: 0%;
+
+    }
+
+    .text-container {
+
+      position: relative;
+      width: 300px;
+      left: 50%;
+      margin-left: -150px
+    }
+
+    .scanInfo {
+      display: none;
+    }
+
+    .upload-title {
+      display: none;
+    }
+
+
   </style>
 
   <!--
@@ -111,6 +146,14 @@
 </head>
 
 <body>
+  <div class="scanner-loader-container">
+    <div class="text-container">
+      <h3>Now scanning page for links</h3>
+      <p>If you've selected 100 or above links this may take a minute or two</p>
+    </div>
+    <img class="scanner-loader" src="711.gif" />
+  </div>
+
   <form class="playlistInfo">
     <legend>
       Please Select Grouplister Preferences
@@ -122,7 +165,7 @@
       <input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> No
       <br>
       <div class="existing">
-        <label for="oldPlaylist">What is the name of this playlist?</label>
+        <label for="oldPlaylist">What is the ID of this playlist?</label>
         <input name="oldPlaylist" type="text" / placeholder="Music Playlist">
       </div>
       <div class="new">
@@ -159,21 +202,22 @@
       <div id="go">Let's Go</div>
     </fieldset>
   </form>
+  <div class="upload-title">
+    <h4>Uploading Links to Youtube</h4>
+  <div>
+  <div class="loader-container">
+    <div class="loader loader-running"></div>
+  </div>
+  <div class="scanInfo">
+    <h3>Info</h3>
+    <p><strong>Playlist Name: </strong><span class="playlistName"></span><p>
+    <p><strong>Number of links: </strong><span class="linkNumber"></span><p>
+  <div>
   <div class="failed-uploads">
-    <p>
-      The following videos have been taken off of youtube
-    </p>
-    <ul>
-
-    </ul>
+    <p><span class="errorNumber"></span> video<span class="plural">s</span><span class="plural2"> is</span> invalid and <span class="plural3">has</span> not been uploaded</p>
   </div>
   <p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p>
   <p class="success-message">Congratulations! Your playlist is now ready for you</p>
-  <div class="loader-container">
-    <div class="loader loader-running">
-
-    </div>
-  </div>
 </body>
 
 </html>
