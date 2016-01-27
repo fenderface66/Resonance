@@ -65,9 +65,30 @@
       display: block;
     }
 
-    .error-message {
+    .error-message, .success-message {
       display: none;
     }
+
+    .loader-container {
+      margin-top: 20px;
+      width: 300px;
+      border: 1px solid black;
+      position: relative;
+      margin-left: -150px;
+      left: 50%;
+      height: auto;
+      box-sizing: border-box;
+      display: none;
+    }
+
+    .loader {
+      background-color: green;
+      height: 20px;
+      width: 0px;
+      margin: 2px;
+      box-sizing: border-box;
+    }
+
   </style>
 
   <!--
@@ -128,7 +149,13 @@
       <div id="go">Let's Go</div>
     </fieldset>
   </form>
-  <p class="error-message">Oops, please make sure you are on a facebook group page before clciking GO</p>
+  <p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p>
+  <p class="success-message">Congratulations! Your playlist is now ready for you</p>
+  <div class="loader-container">
+    <div class="loader loader-running">
+
+    </div>
+  </div>
 </body>
 
 </html>

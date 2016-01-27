@@ -34,6 +34,7 @@ var formHandler = {
 			}
 		});
 		$('#go').on('click', function () {
+      $('.loader-container').fadeIn();
 			google.authorize(function () {
 				formHandler.numberofLinks = $('option:selected').html();
 				formHandler.numberofLinks = parseInt(formHandler.numberofLinks);
@@ -118,6 +119,7 @@ var formHandler = {
 								if(current < ajaxes.length) {
 									console.log(ajaxes[current]);
 									var accessToken = google.getAccessToken();
+									var percentage = current / ajaxes.length;
 									//make the AJAX request with the given data from the `ajaxes` array of objects
 									$.ajax({
 										method: "POST",
@@ -130,14 +132,47 @@ var formHandler = {
 										success: function (serverResponse) {
 											//increment the `current` counter and recursively call this function again
 											current++;
+											$('.loader-running').css({
+												'width': (294 * percentage)
+											});
+											if(current == (ajaxes.length - 1)) {
+												$('.loader-running').css({
+													'width': 294
+												});
+												console.log('if');
+											} else {
+												$('.loader-running').css({
+													'width': (294 * percentage)
+												});
+												console.log('else');
+											}
 											do_ajax();
 										},
 										error: function (serverResponse) {
 											current++;
+											if(current == (ajaxes.length - 1)) {
+												$('.loader-running').css({
+													'width': 294
+												});
+												console.log('if');
+											} else {
+												$('.loader-running').css({
+													'width': (294 * percentage)
+												});
+												console.log('else');
+											}
 											do_ajax();
 										}
 									}).done(function (data, textStatus, request) {
 										console.log("Song added, data: ", data, request);
+										if(current == (ajaxes.length - 2)) {
+											$('.loader-running').css({
+												'width': 294
+											});
+											$('.loader').removeClass('loader-running');
+                      $('.loader-container').fadeOut();
+                      $('.success-message').fadeIn('fast');
+										}
 									});
 								}
 							}
@@ -145,33 +180,11 @@ var formHandler = {
 							do_ajax();
 						})();
 					});
-				}, 10000);
+				}, 600);
 			});
 		});
 	}
 };
-// 						var accessToken = google.getAccessToken();
-// 						var metadata = {
-// 							snippet: {
-// 								playlistId: "PLsZBx9eYlpVXSGzHjX8oaBiLD5GNjE2w3",
-// 								resourceId: {
-// 									kind: "youtube#video",
-// 									videoId: formHandler.idArray[0]
-// 								},
-// 							}
-// 						};
-// 						console.log(metadata);
-// 						$.ajax({
-// 							method: "POST",
-// 							url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet",
-// 							data: JSON.stringify(metadata),
-// 							headers: {
-// 								Authorization: 'Bearer ' + accessToken
-// 							},
-// 							contentType: 'application/json',
-// 						}).done(function (data, textStatus, request) {
-// 							console.log("in success of ajax call, data: ", data, request);
-// 						});
 var google = new OAuth2('google', {
 	client_id: '167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h',
 	client_secret: 'eXytPWFfS23UUAkQz8m4WTyu',
