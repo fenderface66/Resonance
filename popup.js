@@ -9,6 +9,7 @@ var formHandler = {
 		var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
 		if(!enteredURL.match(FBurl)) {
 			$('.error-message').show();
+			$('.scanner-loader-container').hide();
 		} else {
 			$('.error-message').hide();
 			chrome.tabs.executeScript(null, {
@@ -86,6 +87,7 @@ var formHandler = {
 				}, function (tab) {
 					//Be aware that `tab` is an array of Tabs
 					console.log(tab[0].url);
+					console.log('working');
 					formHandler.validFBurl(tab[0].url);
 				});
 				chrome.runtime.onConnect.addListener(function (port) {

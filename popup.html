@@ -69,6 +69,15 @@
 
     .error-message, .success-message {
       display: none;
+      font-weight: bold;
+    }
+
+    .success-message {
+      color: green;
+    }
+
+    .error-message {
+      color: red;
     }
 
     .loader-container {
@@ -129,14 +138,17 @@
 
     .explain {
       display: inline-block;
-      font-size: 0.7em;
-      border: 1px solid black;
+      font-size: 1em;
+      font-weight: bold;
+      border: 2px solid lightgrey;
+      color: grey;
       border-radius: 50%;
-      padding: 5px 8px;
+      padding: 3px 10px;
       cursor: pointer;
       margin-left: 3px;
       position: relative;
-      bottom: 2px;
+      bottom: 0px;
+      top: 2px;
     }
 
     .explanation {
@@ -146,6 +158,10 @@
     .explain-header {
       text-decoration: underline;
       font-weight: bold;
+    }
+
+    .scan-info h3 {
+      text-decoration: underline;
     }
 
   </style>
@@ -228,8 +244,8 @@
     </fieldset>
   </form>
   <div class="upload-title">
-    <h4>Uploading Links to Youtube</h4>
-  <div>
+    <h2>Uploading Links to Youtube</h2>
+  </div>
   <div class="loader-container">
     <div class="loader loader-running"></div>
   </div>
@@ -237,7 +253,7 @@
     <h3>Info</h3>
     <p><strong>Playlist Name: </strong><span class="playlistName"></span><p>
     <p><strong>Number of links: </strong><span class="linkNumber"></span><p>
-  <div>
+  </div>
   <div class="failed-uploads">
     <p><span class="errorNumber"></span> video<span class="plural">s</span><span class="plural2"> is</span> invalid and <span class="plural3">has</span> not been uploaded</p>
   </div>
