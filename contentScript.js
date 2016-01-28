@@ -1,4 +1,14 @@
 (function ($) {
+	// extension:
+	$.fn.scrollEnd = function (callback, timeout) {
+		$(this).scroll(function () {
+			var $this = $(this);
+			if($this.data('scrollTimeout')) {
+				clearTimeout($this.data('scrollTimeout'));
+			}
+			$this.data('scrollTimeout', setTimeout(callback, timeout));
+		});
+	};
 	var gatherURL = {
 		receivedData: {
 			numberofLinks: null,
@@ -28,13 +38,24 @@
 				setTimeout(function () {
 					if(gatherURL.videoID.length < scrollNumber) {
 						console.log('running second');
+						console.log($('#contentArea .uiList').length);
 						gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
 						gatherURL.regexFunctions.findLink();
+						$(window).scrollEnd(function () {
+							var links = gatherURL.videoID.length;
+							chrome.storage.local.set({
+								'value': [gatherURL.videoID, links]
+							}, function () {
+								// Notify that we saved.
+								console.log('Settings saved');
+							});
+						}, 2000);
 					} else if(gatherURL.videoID.length == scrollNumber) {
 						console.log(gatherURL.videoID);
+						var links = gatherURL.videoID.length;
 						// Save it using the Chrome extension storage API.
 						chrome.storage.local.set({
-							'value': gatherURL.videoID
+							'value': [gatherURL.videoID, links]
 						}, function () {
 							// Notify that we saved.
 							console.log('Settings saved');

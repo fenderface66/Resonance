@@ -113,15 +113,16 @@ var formHandler = {
 					$('.linkNumber').text(formHandler.numberofLinks);
 					chrome.storage.local.get('value', function (obj) {
 						console.log('value', obj);
-						formHandler.idArray = obj.value;
-						console.log(obj.value.length);
+						formHandler.idArray = obj.value[0];
+						formHandler.numberofLinks = obj.value[1];
+						console.log(obj.value[1]);
 						console.log(formHandler.idArray);
 						console.log('running list insert');
 						(function () {
 							//setup an array of AJAX options, each object is an index that will specify information for a single AJAX request
 							var ajaxes = [],
 								current = 0;
-							errorCount = 0;
+								errorCount = 0;
 							if(formHandler.existingPlaylist !== true) {
 								console.log('if wins');
 								(function ajaxArray() {
@@ -231,10 +232,9 @@ var formHandler = {
 											$('.loader').removeClass('loader-running');
 											$('.loader-container').fadeOut();
 											$('.success-message').fadeIn('fast');
-											if (formHandler.existingPlaylist === false) {
+											if(formHandler.existingPlaylist === false) {
 												$('.success-message a').attr('href', 'https://www.youtube.com/playlist?list=' + formHandler.newPlaylistID);
-											}
-											else {
+											} else {
 												$('.success-message a').attr('href', 'https://www.youtube.com/playlist?list=' + formHandler.existingName);
 											}
 										}
