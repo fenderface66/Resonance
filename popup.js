@@ -36,14 +36,13 @@ var formHandler = {
 				$('.existing').slideUp();
 			}
 		});
-		$('.explain').click(function() {
+		$('.explain').click(function () {
 			$('.explanation').slideToggle();
 		});
 		$('#go').on('click', function () {
-
 			$('.scanner-loader-container').fadeIn();
 			$('.playlistInfo').hide();
-			google.authorize(function () {
+
 				chrome.storage.local.clear(function () {
 					var error = chrome.runtime.lastError;
 					if(error) {
@@ -105,7 +104,13 @@ var formHandler = {
 						$('.loader-container').fadeIn();
 						$('.scanInfo').fadeIn();
 						$('.upload-title').fadeIn();
-						$('.playlistName').text(formHandler.newName);
+						if(formHandler.existingPlaylist === false) {
+							$('.playlistName').text(formHandler.newName);
+						} else {
+							$.get("https://www.googleapis.com/youtube/v3/" + "playlists?part=snippet&id=" + formHandler.existingName + "&key=" + 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4&', function (data) {
+								$('.playlistName').text(data.items[0].snippet.title);
+							});
+						}
 						$('.linkNumber').text(formHandler.numberofLinks);
 						chrome.storage.local.get('value', function (obj) {
 							console.log('value', obj);
@@ -117,43 +122,44 @@ var formHandler = {
 								//setup an array of AJAX options, each object is an index that will specify information for a single AJAX request
 								var ajaxes = [],
 									current = 0;
-									errorCount = 0;
-								if (formHandler.existingPlaylist !== true)	{
-								(function ajaxArray() {
-									for(var i = 0; i < formHandler.idArray.length; i++) {
-										var accessToken = google.getAccessToken();
-										var metadata = {
-											snippet: {
-												playlistId: formHandler.newPlaylistID,
-												resourceId: {
-													kind: "youtube#video",
-													videoId: formHandler.idArray[i]
-												},
-											}
-										};
-										console.log(formHandler.idArray[i]);
-										ajaxes.push(metadata);
-									}
-								})();
-							}
-							else {
-								(function ajaxArray() {
-									for(var i = 0; i < formHandler.idArray.length; i++) {
-										var accessToken = google.getAccessToken();
-										var metadata = {
-											snippet: {
-												playlistId: formHandler.existingName,
-												resourceId: {
-													kind: "youtube#video",
-													videoId: formHandler.idArray[i]
-												},
-											}
-										};
-										console.log(formHandler.idArray[i]);
-										ajaxes.push(metadata);
-									}
-								})();
-							}
+								errorCount = 0;
+								if(formHandler.existingPlaylist !== true) {
+									console.log('if wins');
+									(function ajaxArray() {
+										for(var i = 0; i < formHandler.idArray.length; i++) {
+											var accessToken = google.getAccessToken();
+											var metadata = {
+												snippet: {
+													playlistId: formHandler.newPlaylistID,
+													resourceId: {
+														kind: "youtube#video",
+														videoId: formHandler.idArray[i]
+													},
+												}
+											};
+											console.log(formHandler.idArray[i]);
+											ajaxes.push(metadata);
+										}
+									})();
+								} else {
+									console.log('else wins');
+									(function ajaxArray() {
+										for(var i = 0; i < formHandler.idArray.length; i++) {
+											var accessToken = google.getAccessToken();
+											var metadata = {
+												snippet: {
+													playlistId: formHandler.existingName,
+													resourceId: {
+														kind: "youtube#video",
+														videoId: formHandler.idArray[i]
+													},
+												}
+											};
+											console.log(formHandler.idArray[i]);
+											ajaxes.push(metadata);
+										}
+									})();
+								}
 								//declare your function to run AJAX requests
 								function do_ajax() {
 									console.log(ajaxes[current].snippet.resourceId.videoId);
@@ -194,16 +200,16 @@ var formHandler = {
 												current++;
 												errorCount++;
 												$('.plural').hide();
-                        $('.failed-uploads').show();
+												$('.failed-uploads').show();
 												// $('.failed-uploads ul').append("<li>" + ajaxes[current]['snippet']['resourceId']['videoId'] + "</li>");
-                        $('.failed-uploads .errorNumber').html('<strong>' + errorCount + '</strong>');
+												$('.failed-uploads .errorNumber').html('<strong>' + errorCount + '</strong>');
 												$('.linkNumber').text((formHandler.numberofLinks - errorCount));
-												if (errorCount > 1) {
+												if(errorCount > 1) {
 													$('.plural').show();
 													$('.plural2').text(' are');
 													$('.plural3').text(' have');
 												}
-                        console.log(serverResponse);
+												console.log(serverResponse);
 												if(current == (ajaxes.length - 1)) {
 													$('.loader-running').css({
 														'width': 294
@@ -236,7 +242,7 @@ var formHandler = {
 						});
 					}, 600);
 				});
-			});
+
 		});
 	}
 };
@@ -246,5 +252,7 @@ var google = new OAuth2('google', {
 	api_scope: 'https://www.googleapis.com/auth/youtube',
 });
 $(document).ready(function () {
-	formHandler.init();
+	google.authorize(function () {
+		formHandler.init();
+	});
 });
