@@ -49,7 +49,7 @@
 								// Notify that we saved.
 								console.log('Settings saved');
 							});
-						}, 2000);
+						}, 2500);
 					} else if(gatherURL.videoID.length == scrollNumber) {
 						console.log(gatherURL.videoID);
 						var links = gatherURL.videoID.length;

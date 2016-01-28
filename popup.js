@@ -5,6 +5,7 @@ var formHandler = {
 	newName: '',
 	idArray: '',
 	newPlaylistID: '',
+	receivedLinks: '',
 	validFBurl: function validFBurl(enteredURL) {
 		var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
 		if(!enteredURL.match(FBurl)) {
@@ -103,6 +104,7 @@ var formHandler = {
 					$('.loader-container').fadeIn();
 					$('.scanInfo').fadeIn();
 					$('.upload-title').fadeIn();
+
 					if(formHandler.existingPlaylist === false) {
 						$('.playlistName').text(formHandler.newName);
 					} else {
@@ -110,14 +112,18 @@ var formHandler = {
 							$('.playlistName').text(data.items[0].snippet.title);
 						});
 					}
-					$('.linkNumber').text(formHandler.numberofLinks);
 					chrome.storage.local.get('value', function (obj) {
 						console.log('value', obj);
 						formHandler.idArray = obj.value[0];
-						formHandler.numberofLinks = obj.value[1];
+						formHandler.receivedLinks = obj.value[1];
+						console.log(formHandler.receivedLinks);
 						console.log(obj.value[1]);
 						console.log(formHandler.idArray);
 						console.log('running list insert');
+						$('.linkNumber').text(formHandler.receivedLinks);
+						if (formHandler.receivedLinks < formHandler.numberofLinks) {
+							$('.scanInfo').append('<p>It appears that the total number of links on this page was <strong>' + (formHandler.numberofLinks - formHandler.receivedLinks) + '</strong> links less then what you selected. </p>');
+						}
 						(function () {
 							//setup an array of AJAX options, each object is an index that will specify information for a single AJAX request
 							var ajaxes = [],
@@ -203,12 +209,13 @@ var formHandler = {
 											$('.failed-uploads').show();
 											// $('.failed-uploads ul').append("<li>" + ajaxes[current]['snippet']['resourceId']['videoId'] + "</li>");
 											$('.failed-uploads .errorNumber').html('<strong>' + errorCount + '</strong>');
-											$('.linkNumber').text((formHandler.numberofLinks - errorCount));
+											$('.linkNumber').text((formHandler.receivedLinks - errorCount));
 											if(errorCount > 1) {
 												$('.plural').show();
 												$('.plural2').text(' are');
 												$('.plural3').text(' have');
 											}
+
 											console.log(serverResponse);
 											if(current == (ajaxes.length - 1)) {
 												$('.loader-running').css({
