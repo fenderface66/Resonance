@@ -112,6 +112,7 @@ var formHandler = {
 							$('.playlistName').text(data.items[0].snippet.title);
 						});
 					}
+
 					chrome.storage.local.get('value', function (obj) {
 						console.log('value', obj);
 						formHandler.idArray = obj.value[0];

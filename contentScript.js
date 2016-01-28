@@ -15,6 +15,7 @@
 			existingPlaylist: null,
 			newName: null,
 			existingName: null,
+			stillScrolling: null,
 			request: function request() {
 				var port = chrome.runtime.connect({
 					name: "popup.js"
@@ -32,6 +33,7 @@
 		videoID: [],
 		regexFunctions: {
 			topScroller: function topScroller(scrollNumber) {
+				gatherURL.stillScrolling = true;
 				$("html, body").animate({
 					scrollTop: $(document).height()
 				}, 100);
@@ -39,9 +41,14 @@
 					if(gatherURL.videoID.length < scrollNumber) {
 						console.log('running second');
 						console.log($('#contentArea .uiList').length);
-						gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
-						gatherURL.regexFunctions.findLink();
+						console.log(gatherURL.stillScrolling);
+						if (gatherURL.stillScrolling === true) {
+							gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
+							gatherURL.regexFunctions.findLink();
+						}
 						$(window).scrollEnd(function () {
+							console.log(gatherURL.stillScrolling);
+							gatherURL.stillScrolling = false;
 							var links = gatherURL.videoID.length;
 							chrome.storage.local.set({
 								'value': [gatherURL.videoID, links]
@@ -49,7 +56,7 @@
 								// Notify that we saved.
 								console.log('Settings saved');
 							});
-						}, 2500);
+						}, 5000);
 					} else if(gatherURL.videoID.length == scrollNumber) {
 						console.log(gatherURL.videoID);
 						var links = gatherURL.videoID.length;
