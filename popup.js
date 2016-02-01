@@ -135,10 +135,9 @@ var formHandler = {
 							currentGet = 0;
 							duplicates = [];
 							duplicatesFound = false;
-							;
 							//declare your function to run AJAX requests
 							function do_ajax() {
-								var newLinkNumber = formHandler.receivedLinks - (errorCount + duplicates.length)
+								var newLinkNumber = formHandler.receivedLinks - (errorCount + duplicates.length);
 								$('.linkNumber').text(newLinkNumber);
 								$('.scanner-loader-container').fadeOut();
 								$('.loader-container').fadeIn();
@@ -149,7 +148,6 @@ var formHandler = {
 								$('.duplicates-number').fadeIn();
 								$('.duplicates-number').text(duplicates.length);
 								formHandler.idLength = formHandler.idArray.length;
-								console.log(ajaxes[current].snippet.resourceId.videoId);
 								//check to make sure there are more requests to make
 								if(current < ajaxes.length) {
 									console.log(ajaxes[current]);
@@ -272,45 +270,37 @@ var formHandler = {
 											}
 										}
 											if (currentGet < formHandler.originalList.length) {
-												console.log('currentGet is still smaller than original length')
+												console.log('currentGet is still smaller than original length');
 												console.log('running ajaxGet');
 												do_ajaxGet();
 											} else {
 												$('.scanner-loader-container').fadeOut();
-												$('.duplicates-message .all-duplicates').show();
-												$('.all-duplicates .numDuplicates').show();
+												if (duplicates.length == formHandler.originalList.length) {
+													$('.duplicates-message .all-duplicates').show();
+												} else {
+													console.log('running do_ajax()');
+													(function ajaxArray() {
+														for(var i = 0; i < formHandler.idArray.length; i++) {
+															var metadata = {
+																snippet: {
+																	playlistId: formHandler.existingName,
+																	resourceId: {
+																		kind: "youtube#video",
+																		videoId: formHandler.idArray[i]
+																	},
+																}
+															};
+															console.log(formHandler.idArray[i]);
+															ajaxes.push(metadata);
+														}
+													})();
+													do_ajax();
+												}
 												$('.duplicates-number').text(duplicates.length);
 												if (duplicates.length > 1) {
 													$('.plural5').show();
 												}
-												console.log('running do_ajax()');
-												(function ajaxArray() {
-													for(var i = 0; i < formHandler.idArray.length; i++) {
-														var metadata = {
-															snippet: {
-																playlistId: formHandler.existingName,
-																resourceId: {
-																	kind: "youtube#video",
-																	videoId: formHandler.idArray[i]
-																},
-															}
-														};
-														console.log(formHandler.idArray[i]);
-														ajaxes.push(metadata);
-													}
-												})();
-												do_ajax();
 											}
-
-									// 	if (duplicates.length == formHandler.originalList.length) {
-									// 		$('.scanner-loader-container').fadeOut();
-									// 		$('.duplicates-message .all-duplicates').show();
-									// 		$('.all-duplicates .numDuplicates').show();
-									// 		$('.duplicates-number').text(duplicates.length);
-									// 		if (duplicates.length > 1) {
-									// 			$('.plural5').show();
-									// 		}
-									// }
 										console.log('done function finished');
 									});
 							}
