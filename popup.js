@@ -4,9 +4,11 @@ var formHandler = {
 	existingName: '',
 	newName: '',
 	idArray: '',
+	originalList: '',
 	newPlaylistID: '',
 	receivedLinks: '',
 	existingLinks: [],
+	idLength: '',
 	validFBurl: function validFBurl(enteredURL) {
 		var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
 		if(!enteredURL.match(FBurl)) {
@@ -102,43 +104,51 @@ var formHandler = {
 			chrome.storage.onChanged.addListener(function (changes, namespace) {
 				console.log("change received!");
 				setTimeout(function () {
-					$('.scanner-loader-container').fadeOut();
-					$('.loader-container').fadeIn();
-					$('.scanInfo').fadeIn();
-					$('.upload-title').fadeIn();
+
+
 					if(formHandler.existingPlaylist === false) {
 						$('.playlistName').text(formHandler.newName);
 					} else {
 						console.log('here');
-						$.get("https://www.googleapis.com/youtube/v3/" + "playlists?part=snippet&id=" + formHandler.existingName + "&key=" + 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4', function (data) {
-							$('.playlistName').text(data.items[0].snippet.title);
-							console.log(data.items[0].snippet.title);
-						});
+						// $.get("https://www.googleapis.com/youtube/v3/" + "playlists?part=snippet&id=" + formHandler.existingName + "&key=" + 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4', function (data) {
+						// 	$('.playlistName').text(data.items[0].snippet.title);
+						// 	console.log(data.items[0].snippet.title);
+						// });
 						if($('.playlistName').text() === '') {
 							$('.playlistName').text('Set playlist to public to see playlist name');
 						}
 					}
 					chrome.storage.local.get('value', function (obj) {
-						console.log('value', obj);
 						formHandler.idArray = obj.value[0];
+						formHandler.idLength = formHandler.idArray.length;
+						formHandler.originalList = formHandler.idArray.slice(0);
+						console.log(formHandler.originalList);
+						console.log(formHandler.idLength);
 						formHandler.receivedLinks = obj.value[1];
-						console.log(formHandler.receivedLinks);
-						console.log(obj.value[1]);
-						console.log(formHandler.idArray);
-						console.log('running list insert');
-						$('.linkNumber').text(formHandler.receivedLinks);
 						if(formHandler.receivedLinks < formHandler.numberofLinks) {
 							$('.scanInfo').append('<p>It appears that the total number of links on this page was <strong>' + (formHandler.numberofLinks - formHandler.receivedLinks) + '</strong> links less then what you selected. </p>');
 						}
 						(function () {
-							var ajaxes = [],
-								errorCount = 0;
+							var ajaxes = [];
+							errorCount = 0;
 							current = 0;
+							currentGet = 0;
 							duplicates = [];
-							console.log(current);
-
+							duplicatesFound = false;
+							;
 							//declare your function to run AJAX requests
 							function do_ajax() {
+								var newLinkNumber = formHandler.receivedLinks - (errorCount + duplicates.length)
+								$('.linkNumber').text(newLinkNumber);
+								$('.scanner-loader-container').fadeOut();
+								$('.loader-container').fadeIn();
+								$('.scanInfo').fadeIn();
+								$('.upload-title').fadeIn();
+								// $('.duplicates-message').fadeIn();
+								$('.numDuplicates').fadeIn();
+								$('.duplicates-number').fadeIn();
+								$('.duplicates-number').text(duplicates.length);
+								formHandler.idLength = formHandler.idArray.length;
 								console.log(ajaxes[current].snippet.resourceId.videoId);
 								//check to make sure there are more requests to make
 								if(current < ajaxes.length) {
@@ -156,6 +166,7 @@ var formHandler = {
 										success: function (serverResponse) {
 											//increment the `current` counter and recursively call this function again
 											current++;
+
 											$('.loader-running').css({
 												'width': (294 * percentage)
 											});
@@ -179,7 +190,8 @@ var formHandler = {
 											$('.failed-uploads').show();
 											// $('.failed-uploads ul').append("<li>" + ajaxes[current]['snippet']['resourceId']['videoId'] + "</li>");
 											$('.failed-uploads .errorNumber').html('<strong>' + errorCount + '</strong>');
-											$('.linkNumber').text((formHandler.receivedLinks - errorCount));
+											console.log(newLinkNumber);
+											$('.linkNumber').text(newLinkNumber - errorCount);
 											if(errorCount > 1) {
 												$('.plural').show();
 												$('.plural2').text(' are');
@@ -201,6 +213,7 @@ var formHandler = {
 										}
 									}).done(function (data, textStatus, request) {
 										console.log("Song added, data: ", data, request);
+										console.log(formHandler.idArray);
 										if(current == (ajaxes.length - 2)) {
 											$('.loader-running').css({
 												'width': 294
@@ -217,49 +230,89 @@ var formHandler = {
 									});
 								}
 							}
-
 							function do_ajaxGet() {
+								$('.text-container h3').text('Checking existing playlist for duplicates');
+								console.log('ajaxGet has been initialised');
 								//check to make sure there are more requests to make
-								if(current < formHandler.idArray.length) {
-									console.log(formHandler.idArray[current]);
 									//make the AJAX request with the given data from the `ajaxes` array of objects
+									console.log('original list length: ' + formHandler.originalList.length);
+									console.log('original list: ' + formHandler.originalList);
+									console.log('currentGet number: ' + currentGet);
+									console.log('current videoID: ' + formHandler.originalList[currentGet]);
 									$.ajax({
 										method: "GET",
-										url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=" + formHandler.existingName + "&videoId=" + formHandler.idArray[current] + "&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4",
+										url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=" + formHandler.existingName + "&videoId=" + formHandler.originalList[currentGet] + "&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4",
 										headers: {
 											Authorization: 'Bearer ' + accessToken
 										},
 										contentType: 'application/json',
-										success: function (serverResponse) {
-											//increment the `current` counter and recursively call this function again
-											current++;
-											do_ajaxGet();
-										}
 									}).done(function (data, textStatus, request) {
+										//increment the `current` counter and recursively call this function again
+										currentGet++;
+										console.log('CurrentGet length: ' + currentGet);
+										console.log('formHandler.idLength: ' + formHandler.idLength);
+										console.log(formHandler.originalList);
 										console.log("Duplicates data: ", data, request);
-										if (data.items.length > 0) {
-											console.log(data.items[0].snippet.resourceId.videoId);
+										console.log(data.items.length);
+										if (data.items.length == 1) {
+											var found = '';
+											console.log('This is a found duplicate id: ' + data.items[0].snippet.resourceId.videoId);
 											duplicates.push(data.items[0].snippet.resourceId.videoId);
 											console.log(duplicates.length);
+											console.log('These are the duplicates so far: ' + duplicates);
+											found = jQuery.inArray(data.items[0].snippet.resourceId.videoId, formHandler.idArray);
+											console.log('duplicates length: ' + duplicates.length);
+											console.log('Links currently in idArray: ' + formHandler.idArray.length);
+											if(found >= 0) {
+												// Element was found, remove it.
+												formHandler.idArray.splice(found, 1);
+												console.log('This was removed from idArray: ' + duplicates[duplicates.length - 1]);
+												console.log('Links remaining in idArray: ' + formHandler.idArray.length);
+												console.log('Remaining Array items: ' + formHandler.idArray);
+											}
 										}
+											if (currentGet < formHandler.originalList.length) {
+												console.log('currentGet is still smaller than original length')
+												console.log('running ajaxGet');
+												do_ajaxGet();
+											} else {
+												$('.scanner-loader-container').fadeOut();
+												$('.duplicates-message .all-duplicates').show();
+												$('.all-duplicates .numDuplicates').show();
+												$('.duplicates-number').text(duplicates.length);
+												if (duplicates.length > 1) {
+													$('.plural5').show();
+												}
+												console.log('running do_ajax()');
+												(function ajaxArray() {
+													for(var i = 0; i < formHandler.idArray.length; i++) {
+														var metadata = {
+															snippet: {
+																playlistId: formHandler.existingName,
+																resourceId: {
+																	kind: "youtube#video",
+																	videoId: formHandler.idArray[i]
+																},
+															}
+														};
+														console.log(formHandler.idArray[i]);
+														ajaxes.push(metadata);
+													}
+												})();
+												do_ajax();
+											}
 
-										if(duplicates.length === 0) {
-											console.log('running do_ajax()');
-											do_ajax();
-										}
-										var found = jQuery.inArray(data.items[0].snippet.resourceId.videoId, formHandler.idArray);
-										if(found >= 0) {
-											console.log('it was found and removed');
-											// Element was found, remove it.
-											formHandler.idArray.splice(found, 1);
-											duplicates.splice(-1, 1);
-											console.log(duplicates.length);
-											console.log(found);
-											console.log(formHandler.idArray);
-										}
-
+									// 	if (duplicates.length == formHandler.originalList.length) {
+									// 		$('.scanner-loader-container').fadeOut();
+									// 		$('.duplicates-message .all-duplicates').show();
+									// 		$('.all-duplicates .numDuplicates').show();
+									// 		$('.duplicates-number').text(duplicates.length);
+									// 		if (duplicates.length > 1) {
+									// 			$('.plural5').show();
+									// 		}
+									// }
+										console.log('done function finished');
 									});
-								}
 							}
 							if(formHandler.existingPlaylist !== true) {
 								console.log('if wins');
@@ -281,149 +334,10 @@ var formHandler = {
 								do_ajax();
 							} else {
 								console.log('else wins');
-								(function ajaxArray() {
-									for(var i = 0; i < formHandler.idArray.length; i++) {
-										var metadata = {
-											snippet: {
-												playlistId: formHandler.existingName,
-												resourceId: {
-													kind: "youtube#video",
-													videoId: formHandler.idArray[i]
-												},
-											}
-										};
-										console.log(formHandler.idArray[i]);
-										ajaxes.push(metadata);
-									}
-								})();
+								do_ajaxGet();
 							}
-							do_ajaxGet();
+
 						})();
-						// setTimeout(function () {
-						// 	(function () {
-						// 		//setup an array of AJAX options, each object is an index that will specify information for a single AJAX request
-						// 		var ajaxes = [],
-						// 			current = 0;
-						// 		errorCount = 0;
-						// 		if(formHandler.existingPlaylist !== true) {
-						// 			console.log('if wins');
-						// 			(function ajaxArray() {
-						// 				for(var i = 0; i < formHandler.idArray.length; i++) {
-						// 					var metadata = {
-						// 						snippet: {
-						// 							playlistId: formHandler.newPlaylistID,
-						// 							resourceId: {
-						// 								kind: "youtube#video",
-						// 								videoId: formHandler.idArray[i]
-						// 							},
-						// 						}
-						// 					};
-						// 					console.log(formHandler.idArray[i]);
-						// 					ajaxes.push(metadata);
-						// 				}
-						// 			})();
-						// 		} else {
-						// 			console.log('else wins');
-						// 			(function ajaxArray() {
-						// 				for(var i = 0; i < formHandler.idArray.length; i++) {
-						// 					var metadata = {
-						// 						snippet: {
-						// 							playlistId: formHandler.existingName,
-						// 							resourceId: {
-						// 								kind: "youtube#video",
-						// 								videoId: formHandler.idArray[i]
-						// 							},
-						// 						}
-						// 					};
-						// 					console.log(formHandler.idArray[i]);
-						// 					ajaxes.push(metadata);
-						// 				}
-						// 			})();
-						// 		}
-						// 		//declare your function to run AJAX requests
-						// 		function do_ajax() {
-						// 			console.log(ajaxes[current].snippet.resourceId.videoId);
-						// 			//check to make sure there are more requests to make
-						// 			if(current < ajaxes.length) {
-						// 				console.log(ajaxes[current]);
-						// 				var percentage = current / ajaxes.length;
-						// 				//make the AJAX request with the given data from the `ajaxes` array of objects
-						// 				$.ajax({
-						// 					method: "POST",
-						// 					url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet",
-						// 					data: JSON.stringify(ajaxes[current]),
-						// 					headers: {
-						// 						Authorization: 'Bearer ' + accessToken
-						// 					},
-						// 					contentType: 'application/json',
-						// 					success: function (serverResponse) {
-						// 						//increment the `current` counter and recursively call this function again
-						// 						current++;
-						// 						$('.loader-running').css({
-						// 							'width': (294 * percentage)
-						// 						});
-						// 						if(current == (ajaxes.length - 1)) {
-						// 							$('.loader-running').css({
-						// 								'width': 294
-						// 							});
-						// 							console.log('if');
-						// 						} else {
-						// 							$('.loader-running').css({
-						// 								'width': (294 * percentage)
-						// 							});
-						// 							console.log('else');
-						// 						}
-						// 						do_ajax();
-						// 					},
-						// 					error: function (serverResponse) {
-						// 						current++;
-						// 						errorCount++;
-						// 						$('.plural').hide();
-						// 						$('.failed-uploads').show();
-						// 						// $('.failed-uploads ul').append("<li>" + ajaxes[current]['snippet']['resourceId']['videoId'] + "</li>");
-						// 						$('.failed-uploads .errorNumber').html('<strong>' + errorCount + '</strong>');
-						// 						$('.linkNumber').text((formHandler.receivedLinks - errorCount));
-						// 						if(errorCount > 1) {
-						// 							$('.plural').show();
-						// 							$('.plural2').text(' are');
-						// 							$('.plural3').text(' have');
-						// 						}
-						// 						console.log(serverResponse);
-						// 						if(current == (ajaxes.length - 1)) {
-						// 							$('.loader-running').css({
-						// 								'width': 294
-						// 							});
-						// 							console.log('if');
-						// 						} else {
-						// 							$('.loader-running').css({
-						// 								'width': (294 * percentage)
-						// 							});
-						// 							console.log('else');
-						// 						}
-						// 						do_ajax();
-						// 					}
-						// 				}).done(function (data, textStatus, request) {
-						// 					console.log("Song added, data: ", data, request);
-						// 					if(current == (ajaxes.length - 2)) {
-						// 						$('.loader-running').css({
-						// 							'width': 294
-						// 						});
-						// 						$('.loader').removeClass('loader-running');
-						// 						$('.loader-container').fadeOut();
-						// 						$('.success-message').fadeIn('fast');
-						// 						if(formHandler.existingPlaylist === false) {
-						// 							$('.success-message a').attr('href', 'https://www.youtube.com/playlist?list=' + formHandler.newPlaylistID);
-						// 						} else {
-						// 							$('.success-message a').attr('href', 'https://www.youtube.com/playlist?list=' + formHandler.existingName);
-						// 						}
-						// 					}
-						// 				});
-						// 			}
-						// 		}
-						// 		//run the AJAX function for the first time once `document.ready` fires
-						// 		do_ajax();
-						// 	})();
-						// }, 5000);
 					});
 				}, 600);
 			});

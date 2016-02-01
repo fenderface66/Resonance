@@ -67,16 +67,20 @@
       display: block;
     }
 
-    .error-message, .success-message {
+    .error-message, .success-message, .all-duplicates, .duplicates-number {
       display: none;
       font-weight: bold;
+    }
+
+    .numDuplicates {
+      display: none;
     }
 
     .success-message {
       color: green;
     }
 
-    .error-message {
+    .error-message, .all-duplicates {
       color: red;
     }
 
@@ -266,12 +270,16 @@
   <div class="scanInfo">
     <h3>Info</h3>
     <p><strong>Playlist Name: </strong><span class="playlistName"></span><p>
-    <p><strong>Number of links: </strong><span class="linkNumber"></span><p>
+    <p><strong>Links to be added: </strong><span class="linkNumber"></span><p>
   </div>
   <div class="failed-uploads">
     <p><span class="errorNumber"></span> video<span class="plural">s</span><span class="plural2"> is</span> invalid and <span class="plural3">has</span> not been uploaded</p>
   </div>
   <p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p>
+  <div class="duplicates-message">
+    <p class="all-duplicates">It appears that all the links you tried to add already exist in this playlist<p>
+    <p class="numDuplicates"><span class="duplicates-number"></span> duplicate<span class="plural5">s </span>have been found</p>
+  </div>
   <div class="success-message">
     <p>
       Congratulations! Your playlist is now ready for you
