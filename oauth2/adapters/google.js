@@ -2,14 +2,12 @@ OAuth2.adapter('google', {
   authorizationCodeURL: function(config) {
     return ('https://accounts.google.com/o/oauth2/auth?' +
       'approval_prompt=force&' +
-      'client_id={{CLIENT_ID}}&' +
+      'client_id=167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h&' +
       'redirect_uri={{REDIRECT_URI}}&' +
-      'scope={{API_SCOPE}}&' +
-      'access_type=offline&' +
+      'scope=https://www.googleapis.com/auth/youtube&' +
+      'access_type=online&' +
       'response_type=code')
-        .replace('{{CLIENT_ID}}', config.clientId)
-        .replace('{{REDIRECT_URI}}', this.redirectURL(config))
-        .replace('{{API_SCOPE}}', config.apiScope);
+        .replace('{{REDIRECT_URI}}', this.redirectURL(config));
   },
 
   redirectURL: function(config) {

@@ -7,7 +7,9 @@
 		"default_icon": "icon.png",
 		"default_popup": "popup.html"
 	},
-
+	"background": {
+    "scripts": ["background.js"]
+  },
 	"content_scripts": [{
 		"matches": ["http://www.google.com/robots.txt*"],
 		"js": ["oauth2/oauth2_inject.js"],
@@ -23,7 +25,7 @@
 				"https://accounts.google.com/o/oauth2/token"
 			],
   "oauth2": {
-    "client_id": "167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h.apps.googleusercontent.com",
+    "client_id": "167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h",
     "scopes": [
       "https://www.googleapis.com/auth/youtube"
     ]

@@ -1,3 +1,9 @@
+var google = new OAuth2('google', {
+	client_id: '167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h',
+	client_secret: 'eXytPWFfS23UUAkQz8m4WTyu',
+	api_scope: 'https://www.googleapis.com/auth/youtube',
+});
+
 var formHandler = {
 	numberofLinks: null,
 	existingPlaylist: false,
@@ -334,11 +340,7 @@ var formHandler = {
 		});
 	}
 };
-var google = new OAuth2('google', {
-	client_id: '167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h',
-	client_secret: 'eXytPWFfS23UUAkQz8m4WTyu',
-	api_scope: 'https://www.googleapis.com/auth/youtube',
-});
+
 $(document).ready(function () {
 	google.authorize(function () {
 		formHandler.init();
