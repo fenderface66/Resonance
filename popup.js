@@ -15,6 +15,7 @@ var formHandler = {
 	receivedLinks: '',
 	existingLinks: [],
 	idLength: '',
+	nextPageToken: '',
 	validFBurl: function validFBurl(enteredURL) {
 		var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
 		if(!enteredURL.match(FBurl)) {
@@ -140,10 +141,11 @@ var formHandler = {
 							current = 0;
 							currentGet = 0;
 							duplicates = [];
-							duplicatesFound = false;
+							duplicatesFound = [];
+							pages = 0;
 							//declare your function to run AJAX requests
 							function do_ajax() {
-								var newLinkNumber = formHandler.receivedLinks - (errorCount + duplicates.length);
+								var newLinkNumber = formHandler.idArray.length;
 								$('.linkNumber').text(newLinkNumber);
 								$('.scanner-loader-container').fadeOut();
 								$('.loader-container').fadeIn();
@@ -152,7 +154,7 @@ var formHandler = {
 								// $('.duplicates-message').fadeIn();
 								$('.numDuplicates').fadeIn();
 								$('.duplicates-number').fadeIn();
-								$('.duplicates-number').text(duplicates.length);
+								$('.duplicates-number').text(duplicatesFound.length);
 								formHandler.idLength = formHandler.idArray.length;
 								//check to make sure there are more requests to make
 								if(current < ajaxes.length) {
@@ -218,7 +220,9 @@ var formHandler = {
 									}).done(function (data, textStatus, request) {
 										console.log("Song added, data: ", data, request);
 										console.log(formHandler.idArray);
-										if(current == (ajaxes.length - 2)) {
+										console.log(current);
+										console.log(ajaxes.length);
+										if(current == ajaxes.length) {
 											$('.loader-running').css({
 												'width': 294
 											});
@@ -234,6 +238,93 @@ var formHandler = {
 									});
 								}
 							}
+							function do_ajaxGetNextPage() {
+								console.log('ajaxGet Next page has been initialised');
+								//check to make sure there are more requests to make
+									//make the AJAX request with the given data from the `ajaxes` array of objects
+									$.ajax({
+										method: "GET",
+										url: "https://www.googleapis.com/youtube/v3/playlistItems?pageToken="+ formHandler.nextPageToken +"&part=snippet&maxResults=50&playlistId=" + formHandler.existingName + "&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4",
+										headers: {
+											Authorization: 'Bearer ' + accessToken
+										},
+										contentType: 'application/json',
+									}).done(function (data, textStatus, request) {
+										//increment the `current` counter and recursively call this function again
+
+										console.log('CurrentGet length: ' + currentGet);
+										console.log('formHandler.idLength: ' + formHandler.idLength);
+										console.log(formHandler.originalList);
+										console.log("Duplicates data: ", data, request);
+										console.log(data.items.length);
+										if (data.items.length > 1) {
+											var found = '';
+											console.log('This is a found duplicate id: ' + data.items[0].snippet.resourceId.videoId);
+
+											for (var i = 0; i < data.items.length; i++) {
+												currentGet++;
+												console.log(data);
+												console.log(data.items[i].snippet.resourceId.videoId);
+												duplicates.push(data.items[i].snippet.resourceId.videoId);
+												console.log('These are the duplicates so far: ' + duplicates);
+												console.log('data items length: ' + data.items.length);
+												console.log('Current Get length: ' + currentGet);
+												if (data.items.length == 50 && currentGet == data.items.length && pages < 4) {
+													console.log('End of page reached');
+													currentGet = 0;
+													do_ajaxGetNextPage();
+													pages++;
+												}
+												else if (currentGet == data.items.length) {
+													console.log(duplicates.length);
+													for (var g = 0; g < duplicates.length; g++) {
+														found = jQuery.inArray(duplicates[g], formHandler.idArray);
+														console.log(g);
+														if(found >= 0) {
+															// Element was found, remove it.
+															formHandler.idArray.splice(found, 1);
+															duplicatesFound.push(duplicates[g]);
+															console.log('This was removed from idArray: ' + duplicates[g]);
+															console.log('Links remaining in idArray: ' + formHandler.idArray.length);
+															console.log('Remaining Array items: ' + formHandler.idArray);
+															console.log(g);
+															console.log(duplicates.length);
+														}
+														if (g == (duplicates.length - 1)) {
+															$('.scanner-loader-container').fadeOut();
+															if (formHandler.idArray.length === 0) {
+																$('.duplicates-message .all-duplicates').show();
+															} else {
+																console.log('running do_ajax()');
+																(function ajaxArray() {
+																	for(var i = 0; i < formHandler.idArray.length; i++) {
+																		var metadata = {
+																			snippet: {
+																				playlistId: formHandler.existingName,
+																				resourceId: {
+																					kind: "youtube#video",
+																					videoId: formHandler.idArray[i]
+																				},
+																			}
+																		};
+																		console.log(formHandler.idArray[i]);
+																		ajaxes.push(metadata);
+																	}
+																})();
+																do_ajax();
+															}
+															$('.duplicates-number').text(duplicates.length);
+															if (duplicates.length > 1) {
+																$('.plural5').show();
+															}
+														}
+													}
+												}
+											}
+										}
+										console.log('AjaxGetNext is done');
+									});
+							}
 							function do_ajaxGet() {
 								$('.text-container h3').text('Checking existing playlist for duplicates');
 								console.log('ajaxGet has been initialised');
@@ -245,68 +336,81 @@ var formHandler = {
 									console.log('current videoID: ' + formHandler.originalList[currentGet]);
 									$.ajax({
 										method: "GET",
-										url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=" + formHandler.existingName + "&videoId=" + formHandler.originalList[currentGet] + "&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4",
+										url: "https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=50&playlistId=" + formHandler.existingName + "&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4",
 										headers: {
 											Authorization: 'Bearer ' + accessToken
 										},
 										contentType: 'application/json',
 									}).done(function (data, textStatus, request) {
 										//increment the `current` counter and recursively call this function again
-										currentGet++;
+
 										console.log('CurrentGet length: ' + currentGet);
 										console.log('formHandler.idLength: ' + formHandler.idLength);
 										console.log(formHandler.originalList);
 										console.log("Duplicates data: ", data, request);
 										console.log(data.items.length);
-										if (data.items.length == 1) {
+										if (data.items.length > 1) {
 											var found = '';
 											console.log('This is a found duplicate id: ' + data.items[0].snippet.resourceId.videoId);
-											duplicates.push(data.items[0].snippet.resourceId.videoId);
-											console.log(duplicates.length);
-											console.log('These are the duplicates so far: ' + duplicates);
-											found = jQuery.inArray(data.items[0].snippet.resourceId.videoId, formHandler.idArray);
-											console.log('duplicates length: ' + duplicates.length);
-											console.log('Links currently in idArray: ' + formHandler.idArray.length);
-											if(found >= 0) {
-												// Element was found, remove it.
-												formHandler.idArray.splice(found, 1);
-												console.log('This was removed from idArray: ' + duplicates[duplicates.length - 1]);
-												console.log('Links remaining in idArray: ' + formHandler.idArray.length);
-												console.log('Remaining Array items: ' + formHandler.idArray);
+
+											for (var i = 0; i < data.items.length; i++) {
+												currentGet++;
+												console.log(data);
+												console.log(data.items[i].snippet.resourceId.videoId);
+												duplicates.push(data.items[i].snippet.resourceId.videoId);
+												console.log('These are the duplicates so far: ' + duplicates);
+												if (data.nextPageToken.length && currentGet == data.items.length) {
+													formHandler.nextPageToken = data.nextPageToken;
+													console.log(formHandler.nextPageToken);
+													console.log('End of page reached');
+													console.log('next page ajax running');
+													currentGet = 0;
+													do_ajaxGetNextPage();
+												}
+												else if (currentGet == data.items.length) {
+													console.log(duplicates.length);
+													for (var g = 0; g < duplicates.length; g++) {
+														found = jQuery.inArray(duplicates[g], formHandler.idArray);
+														console.log(g);
+														if(found >= 0) {
+															// Element was found, remove it.
+															formHandler.idArray.splice(found, 1);
+															console.log('This was removed from idArray: ' + duplicates[g]);
+															console.log('Links remaining in idArray: ' + formHandler.idArray.length);
+															console.log('Remaining Array items: ' + formHandler.idArray);
+														}
+														if (g == duplicates.length) {
+															$('.scanner-loader-container').fadeOut();
+															if (formHandler.idArray.length === 0) {
+																$('.duplicates-message .all-duplicates').show();
+															} else {
+																console.log('running do_ajax()');
+																(function ajaxArray() {
+																	for(var i = 0; i < formHandler.idArray.length; i++) {
+																		var metadata = {
+																			snippet: {
+																				playlistId: formHandler.existingName,
+																				resourceId: {
+																					kind: "youtube#video",
+																					videoId: formHandler.idArray[i]
+																				},
+																			}
+																		};
+																		console.log(formHandler.idArray[i]);
+																		ajaxes.push(metadata);
+																	}
+																})();
+																do_ajax();
+															}
+															$('.duplicates-number').text(duplicates.length);
+															if (duplicates.length > 1) {
+																$('.plural5').show();
+															}
+														}
+													}
+												}
 											}
 										}
-											if (currentGet < formHandler.originalList.length) {
-												console.log('currentGet is still smaller than original length');
-												console.log('running ajaxGet');
-												do_ajaxGet();
-											} else {
-												$('.scanner-loader-container').fadeOut();
-												if (duplicates.length == formHandler.originalList.length) {
-													$('.duplicates-message .all-duplicates').show();
-												} else {
-													console.log('running do_ajax()');
-													(function ajaxArray() {
-														for(var i = 0; i < formHandler.idArray.length; i++) {
-															var metadata = {
-																snippet: {
-																	playlistId: formHandler.existingName,
-																	resourceId: {
-																		kind: "youtube#video",
-																		videoId: formHandler.idArray[i]
-																	},
-																}
-															};
-															console.log(formHandler.idArray[i]);
-															ajaxes.push(metadata);
-														}
-													})();
-													do_ajax();
-												}
-												$('.duplicates-number').text(duplicates.length);
-												if (duplicates.length > 1) {
-													$('.plural5').show();
-												}
-											}
 										console.log('done function finished');
 									});
 							}
