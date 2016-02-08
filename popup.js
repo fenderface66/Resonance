@@ -241,7 +241,7 @@ var formHandler = {
 										console.log(formHandler.idArray);
 										console.log(current);
 										console.log(ajaxes.length);
-										if(current == ajaxes.length) {
+										if(current == (ajaxes.length - 1)) {
 											$('.loader-running').css({
 												'width': 294
 											});
@@ -406,6 +406,7 @@ var formHandler = {
 														if(found >= 0) {
 															// Element was found, remove it.
 															formHandler.idArray.splice(found, 1);
+															duplicatesFound.push(duplicates[g]);
 															console.log('This was removed from idArray: ' + duplicates[g]);
 															console.log('Links remaining in idArray: ' + formHandler.idArray.length);
 															console.log('Remaining Array items: ' + formHandler.idArray);
