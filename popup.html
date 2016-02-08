@@ -7,13 +7,27 @@
 <html>
 
 <head>
-  <title>GroupLister</title>
+  <title>Resonance</title>
   <style>
+
+    a {
+      color: #0F4DA8;
+    }
+
+    html {
+      color: #414141;
+    }
+
     body {
       font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
       font-size: 100%;
       min-width: 300px;
       padding: 10px;
+      background-color: #FFE600;
+    }
+
+    p {
+      color: #414141;
     }
 
     .playlistInfo {
@@ -24,19 +38,30 @@
       margin-top: 20px;
       padding-bottom: 5px;
       width: 100%;
+      font-size: 1.3em;
+      font-weight: bold;
     }
 
-    fieldset {}
+    fieldset {
+      border: 0;
+      border-radius: 10px;
+      padding-left: 0;
+    }
+
+    fieldset >label:first-child {
+      margin-top: 0px;
+    }
 
     label,
     input,
     select,
     legend {
       margin: 4px 0;
+      color: #414141;
     }
 
     label {
-      margin-top: 12px;
+      margin-top: 20px;
     }
 
     label,
@@ -51,23 +76,28 @@
     }
 
     #go {
-      padding: 15px 20px;
+      padding: 10px 15px;
       font-size: 16px;
       background: white;
-      border: 1px solid #ccc;
       cursor: pointer;
       -webkit-border-radius: 5px;
       border-radius: 5px;
-      margin-top: 12px;
+      margin-top: 20px;
       width: 62px;
+      border: 1px solid transparent;
+      transition: .2s;
 
+    }
+
+    #go:hover {
+      background-color: #ECE9E9;
     }
 
     select {
       display: block;
     }
 
-    .error-message, .success-message, .all-duplicates, .duplicates-number {
+    .error-message, .success-message, .all-duplicates, .duplicates-number, .duplicatesAndErrors {
       display: none;
       font-weight: bold;
     }
@@ -80,14 +110,14 @@
       color: green;
     }
 
-    .error-message, .all-duplicates {
+    .error-message, .all-duplicates, .duplicatesAndErrors {
       color: red;
     }
 
     .loader-container {
       margin-top: 20px;
       width: 300px;
-      border: 1px solid black;
+      border: 1px solid #969696;
       position: relative;
       margin-left: -150px;
       left: 50%;
@@ -97,7 +127,7 @@
     }
 
     .loader {
-      background-color: green;
+      background-color: #414141;
       height: 20px;
       width: 0px;
       margin: 2px;
@@ -144,19 +174,22 @@
       display: inline-block;
       font-size: 1em;
       font-weight: bold;
-      border: 2px solid lightgrey;
-      color: grey;
+      border: 1px solid #414141;
+      color: #414141  ;
       border-radius: 50%;
-      padding: 3px 10px;
+      padding: 5px 10px;
       cursor: pointer;
       margin-left: 3px;
       position: relative;
       bottom: 0px;
-      top: 2px;
     }
 
     .explanation {
       display: none;
+      border-top: 1px solid #414141;
+      border-bottom: 1px solid #414141;
+      margin-top: 14px;
+      padding: 10px 0;
     }
 
     .explain-header {
@@ -166,6 +199,11 @@
 
     .scan-info h3 {
       text-decoration: underline;
+    }
+    .invalidPlaylist {
+      color: red;
+      display: none;
+      font-weight: bold;
     }
 
   </style>
@@ -197,13 +235,13 @@
 
   <form class="playlistInfo">
     <legend>
-      Please Select Grouplister Preferences
+      Please Select Resonance Preferences
     </legend>
     <fieldset>
-      <label>Would you like to put these songs into an existing playlist?</label>
-      <input class="existingPlaylist" type="radio" name="existingPlaylist" value="yes"> Yes
+      <label>Would you like to put these songs into an existing playlist or a newly created one?</label>
+      <input class="existingPlaylist" type="radio" name="existingPlaylist" value="yes"> Existing Playlist
       <br>
-      <input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> No
+      <input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> New Playlist
       <br>
       <div class="existing">
         <label for="oldPlaylist">What is the ID of this playlist?</label>
@@ -278,8 +316,10 @@
   <p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p>
   <div class="duplicates-message">
     <p class="all-duplicates">It appears that all the links you tried to add already exist in this playlist<p>
+    <p class="duplicatesAndErrors">It appears that all the links you tried to add either already exist in this playlist or were invalid links</p>
     <p class="numDuplicates"><span class="duplicates-number"></span> duplicate<span class="plural5">s </span>have been found</p>
   </div>
+  <p class="invalidPlaylist">The playlist id you gave seems to be invalid please make sure you have entered it correctly. Refresh and try again</p>
   <div class="success-message">
     <p>
       Congratulations! Your playlist is now ready for you

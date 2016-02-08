@@ -16,6 +16,8 @@ var formHandler = {
 	existingLinks: [],
 	idLength: '',
 	nextPageToken: '',
+	ajaxGetInitialised: false,
+	newLinkNumber: null,
 	validFBurl: function validFBurl(enteredURL) {
 		var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
 		if(!enteredURL.match(FBurl)) {
@@ -145,8 +147,8 @@ var formHandler = {
 							pages = 0;
 							//declare your function to run AJAX requests
 							function do_ajax() {
-								var newLinkNumber = formHandler.idArray.length;
-								$('.linkNumber').text(newLinkNumber);
+
+
 								$('.scanner-loader-container').fadeOut();
 								$('.loader-container').fadeIn();
 								$('.scanInfo').fadeIn();
@@ -172,7 +174,9 @@ var formHandler = {
 										success: function (serverResponse) {
 											//increment the `current` counter and recursively call this function again
 											current++;
-
+											var adjustedCount = formHandler.newLinkNumber - errorCount;
+											console.log(adjustedCount);
+											$('.linkNumber').text(adjustedCount);
 											$('.loader-running').css({
 												'width': (294 * percentage)
 											});
@@ -196,8 +200,11 @@ var formHandler = {
 											$('.failed-uploads').show();
 											// $('.failed-uploads ul').append("<li>" + ajaxes[current]['snippet']['resourceId']['videoId'] + "</li>");
 											$('.failed-uploads .errorNumber').html('<strong>' + errorCount + '</strong>');
-											console.log(newLinkNumber);
-											$('.linkNumber').text(newLinkNumber - errorCount);
+											console.log(formHandler.newLinkNumber);
+											console.log(errorCount);
+											var adjustedCount = formHandler.newLinkNumber - errorCount;
+											console.log(adjustedCount);
+											$('.linkNumber').text(adjustedCount);
 											if(errorCount > 1) {
 												$('.plural').show();
 												$('.plural2').text(' are');
@@ -213,9 +220,21 @@ var formHandler = {
 												$('.loader-running').css({
 													'width': (294 * percentage)
 												});
+												console.log($('.linkNumber').text());
+												if ($('.linkNumber').text() == '0') {
+													$('.scanner-loader-container').fadeOut();
+													$('.upload-title').fadeOut();
+													$('.failed-uploads').fadeOut();
+													$('.loader-container').fadeOut();
+													$('.scanInfo').fadeOut();
+													$('.numDuplicates').fadeOut();
+													$('.duplicatesAndErrors').show();
+												}
 												console.log('else');
 											}
-											do_ajax();
+											if (current < ajaxes.length) {
+												do_ajax();
+											}
 										}
 									}).done(function (data, textStatus, request) {
 										console.log("Song added, data: ", data, request);
@@ -259,27 +278,31 @@ var formHandler = {
 										console.log(data.items.length);
 										if (data.items.length > 1) {
 											var found = '';
-											console.log('This is a found duplicate id: ' + data.items[0].snippet.resourceId.videoId);
+											console.log('Existing ID has been pushed to duplicates aray for cross checking: ' + data.items[0].snippet.resourceId.videoId);
 
 											for (var i = 0; i < data.items.length; i++) {
 												currentGet++;
 												console.log(data);
 												console.log(data.items[i].snippet.resourceId.videoId);
 												duplicates.push(data.items[i].snippet.resourceId.videoId);
-												console.log('These are the duplicates so far: ' + duplicates);
+												console.log('These are the existing ids used for cross checking: ' + duplicates);
+												console.log('This is the length of the cross checking array:' + duplicates.length);
 												console.log('data items length: ' + data.items.length);
 												console.log('Current Get length: ' + currentGet);
-												if (data.items.length == 50 && currentGet == data.items.length && pages < 4) {
+												if (data.items.length == 50 && currentGet == data.items.length) {
 													console.log('End of page reached');
+
+													formHandler.nextPageToken = data.nextPageToken;
+													console.log('nextPage Token = ' + data.nextPageToken);
 													currentGet = 0;
 													do_ajaxGetNextPage();
 													pages++;
 												}
 												else if (currentGet == data.items.length) {
 													console.log(duplicates.length);
-													for (var g = 0; g < duplicates.length; g++) {
+													for (var g = 0; g < (duplicates.length + 1); g++) {
 														found = jQuery.inArray(duplicates[g], formHandler.idArray);
-														console.log(g);
+														console.log('iterator length = ' + g);
 														if(found >= 0) {
 															// Element was found, remove it.
 															formHandler.idArray.splice(found, 1);
@@ -287,10 +310,10 @@ var formHandler = {
 															console.log('This was removed from idArray: ' + duplicates[g]);
 															console.log('Links remaining in idArray: ' + formHandler.idArray.length);
 															console.log('Remaining Array items: ' + formHandler.idArray);
-															console.log(g);
-															console.log(duplicates.length);
+															console.log('iterator length = ' + g);
+															console.log('Cross checking array length = ' + duplicates.length);
 														}
-														if (g == (duplicates.length - 1)) {
+														if (g == (duplicates.length)) {
 															$('.scanner-loader-container').fadeOut();
 															if (formHandler.idArray.length === 0) {
 																$('.duplicates-message .all-duplicates').show();
@@ -311,6 +334,9 @@ var formHandler = {
 																		ajaxes.push(metadata);
 																	}
 																})();
+																console.log('doing ajax');
+																console.log(ajaxes);
+																formHandler.newLinkNumber = formHandler.idArray.length;
 																do_ajax();
 															}
 															$('.duplicates-number').text(duplicates.length);
@@ -341,6 +367,11 @@ var formHandler = {
 											Authorization: 'Bearer ' + accessToken
 										},
 										contentType: 'application/json',
+										error: function (serverResponse) {
+											$('.scanner-loader-container').fadeOut();
+											$('.invalidPlaylist').fadeIn();
+
+										}
 									}).done(function (data, textStatus, request) {
 										//increment the `current` counter and recursively call this function again
 
@@ -351,17 +382,17 @@ var formHandler = {
 										console.log(data.items.length);
 										if (data.items.length > 1) {
 											var found = '';
-											console.log('This is a found duplicate id: ' + data.items[0].snippet.resourceId.videoId);
+											console.log('Existing playlist ids ' + data.items[0].snippet.resourceId.videoId);
 
 											for (var i = 0; i < data.items.length; i++) {
 												currentGet++;
 												console.log(data);
 												console.log(data.items[i].snippet.resourceId.videoId);
 												duplicates.push(data.items[i].snippet.resourceId.videoId);
-												console.log('These are the duplicates so far: ' + duplicates);
-												if (data.nextPageToken.length && currentGet == data.items.length) {
+												console.log('Pushing the following exsting ids into a duplicates array for cross checking: ' + duplicates);
+												if (currentGet == data.items.length && currentGet == 50) {
 													formHandler.nextPageToken = data.nextPageToken;
-													console.log(formHandler.nextPageToken);
+													console.log('nextPage Token = ' + data.nextPageToken);
 													console.log('End of page reached');
 													console.log('next page ajax running');
 													currentGet = 0;
@@ -379,7 +410,7 @@ var formHandler = {
 															console.log('Links remaining in idArray: ' + formHandler.idArray.length);
 															console.log('Remaining Array items: ' + formHandler.idArray);
 														}
-														if (g == duplicates.length) {
+														if (g == (duplicates.length -1)) {
 															$('.scanner-loader-container').fadeOut();
 															if (formHandler.idArray.length === 0) {
 																$('.duplicates-message .all-duplicates').show();
@@ -400,6 +431,9 @@ var formHandler = {
 																		ajaxes.push(metadata);
 																	}
 																})();
+																console.log('doing ajax');
+																console.log(ajaxes);
+																formHandler.newLinkNumber = formHandler.idArray.length;
 																do_ajax();
 															}
 															$('.duplicates-number').text(duplicates.length);
@@ -416,6 +450,7 @@ var formHandler = {
 							}
 							if(formHandler.existingPlaylist !== true) {
 								console.log('if wins');
+								formHandler.newLinkNumber = formHandler.idArray.length;
 								(function ajaxArray() {
 									for(var i = 0; i < formHandler.idArray.length; i++) {
 										var metadata = {
@@ -434,9 +469,31 @@ var formHandler = {
 								do_ajax();
 							} else {
 								console.log('else wins');
-								do_ajaxGet();
+								if (formHandler.ajaxGetInitialised === false) {
+									do_ajaxGet();
+									formHandler.ajaxGetInitialised = true;
+									console.log('formHandler.ajaxGetInitialised = ' + formHandler.ajaxGetInitialised);
+								}
+								else {
+									formHandler.newLinkNumber = formHandler.idArray.length;
+									(function ajaxArray() {
+										for(var i = 0; i < formHandler.idArray.length; i++) {
+											var metadata = {
+												snippet: {
+													playlistId: formHandler.newPlaylistID,
+													resourceId: {
+														kind: "youtube#video",
+														videoId: formHandler.idArray[i]
+													},
+												}
+											};
+											console.log(formHandler.idArray[i]);
+											ajaxes.push(metadata);
+										}
+									})();
+									do_ajax();
+								}
 							}
-
 						})();
 					});
 				}, 600);
@@ -444,7 +501,6 @@ var formHandler = {
 		});
 	}
 };
-
 $(document).ready(function () {
 	google.authorize(function () {
 		formHandler.init();

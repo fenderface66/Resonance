@@ -16,6 +16,8 @@
 			newName: null,
 			existingName: null,
 			stillScrolling: null,
+			scrolled: false,
+			arrayCreated: null,
 			request: function request() {
 				var port = chrome.runtime.connect({
 					name: "popup.js"
@@ -33,12 +35,18 @@
 		videoID: [],
 		regexFunctions: {
 			topScroller: function topScroller(scrollNumber) {
+				if (gatherURL.scrolled === undefined) {
+					console.log('running');
+					$(document.body).scrollTop(0);
+					gatherURL.scrolled = true;
+				}
 				gatherURL.stillScrolling = true;
 				$("html, body").animate({
 					scrollTop: $(document).height()
 				}, 100);
 				setTimeout(function () {
 					if(gatherURL.videoID.length < scrollNumber) {
+						console.log(gatherURL.videoID.length);
 						console.log('running second');
 						console.log($('#contentArea .uiList').length);
 						console.log(gatherURL.stillScrolling);
@@ -50,23 +58,30 @@
 							console.log(gatherURL.stillScrolling);
 							gatherURL.stillScrolling = false;
 							var links = gatherURL.videoID.length;
+							if (gatherURL.arrayCreated === undefined) {
+								gatherURL.arrayCreated = true;
+								chrome.storage.local.set({
+									'value': [gatherURL.videoID, links]
+								}, function () {
+									// Notify that we saved.
+									console.log('Settings saved');
+								});
+							}
+						}, 5000);
+					} else if(gatherURL.videoID.length == scrollNumber) {
+						console.log(gatherURL.videoID);
+						var links = gatherURL.videoID.length;
+						// Save it using the Chrome extension storage API.
+						console.log(gatherURL.arrayCreated);
+						if (gatherURL.arrayCreated === undefined) {
+							gatherURL.arrayCreated = true;
 							chrome.storage.local.set({
 								'value': [gatherURL.videoID, links]
 							}, function () {
 								// Notify that we saved.
 								console.log('Settings saved');
 							});
-						}, 5000);
-					} else if(gatherURL.videoID.length == scrollNumber) {
-						console.log(gatherURL.videoID);
-						var links = gatherURL.videoID.length;
-						// Save it using the Chrome extension storage API.
-						chrome.storage.local.set({
-							'value': [gatherURL.videoID, links]
-						}, function () {
-							// Notify that we saved.
-							console.log('Settings saved');
-						});
+						}
 					}
 				}, 1000);
 			},
