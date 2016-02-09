@@ -9,6 +9,21 @@
 			$this.data('scrollTimeout', setTimeout(callback, timeout));
 		});
 	};
+
+
+	var createPopup = {
+		fn: {
+			insert: function() {
+				$('body').prepend('<div class="popupMain"></div>');
+				$('.popupMain').fadeIn();
+			}
+		},
+		init: function() {
+			console.log('running insert');
+			createPopup.fn.insert();
+		}
+	};
+
 	var gatherURL = {
 		receivedData: {
 			numberofLinks: null,
@@ -124,6 +139,7 @@
 	};
 	gatherURL.receivedData.request();
 	setTimeout(function () {
+		createPopup.init();
 		gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
 	}, 10);
 })(jQuery);
