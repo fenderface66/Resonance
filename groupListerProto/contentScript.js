@@ -64,11 +64,15 @@
 			}
 		},
 		postLister: function postLister() {
+			var finished = false;
 			$('.mbm').click(function() {
 				console.log(this);
-				$(this).toggleClass('chosenThread');
+				if (finished === false) {
+					$(this).toggleClass('chosenThread');
+				}
 			});
 			$('.doneButton').click(function(){
+				finished = true;
 				$('.threadNumber').text($('.chosenThread').length);
 				$('.chosenThread').each(function() {
 
@@ -84,7 +88,6 @@
 				});
 			});
 		},
-		ajaxCall: function ajaxCall() {},
 		init: function init() {
 			formHandler.postLister();
 			console.log('running formHandler');
@@ -136,9 +139,10 @@
 				}
 				formHandler.existingName = $('input[name="oldPlaylist"]').val();
 				formHandler.newName = $('input[name="playlistName"]').val();
-				gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
+
 				console.log(formHandler.accessToken);
 				var accessToken = formHandler.accessToken;
+
 				(function () {
 					//make the AJAX request with the given data from the `ajaxes` array of objects
 					console.log(formHandler.newName);
@@ -161,14 +165,7 @@
 						console.log(formHandler.newPlaylistID);
 					});
 				})();
-				chrome.runtime.onConnect.addListener(function (port) {
-					port.postMessage({
-						numberofLinks: formHandler.numberofLinks,
-						existingPlaylist: formHandler.existingPlaylist,
-						newName: formHandler.newName,
-						existingName: formHandler.existingName
-					});
-				});
+				gatherURL.regexFunctions.topScroller(formHandler.numberofLinks);
 				chrome.storage.onChanged.addListener(function (changes, namespace) {
 					console.log("change received!");
 					setTimeout(function () {
@@ -601,7 +598,7 @@
 						console.log($('#contentArea .uiList').length);
 						console.log(gatherURL.stillScrolling);
 						if (gatherURL.stillScrolling === true) {
-							gatherURL.regexFunctions.topScroller(gatherURL.receivedData.numberofLinks);
+							gatherURL.regexFunctions.topScroller(formHandler.numberofLinks);
 							gatherURL.regexFunctions.findLink();
 						}
 						$(window).scrollEnd(function () {
@@ -652,7 +649,7 @@
 					var youtubeLink = $(this).find('._6m3 .mbs').html();
 					var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
 					if(checkYoutube == 'youtube.com') {
-						if((gatherURL.videoID.length) < gatherURL.receivedData.numberofLinks) {
+						if((gatherURL.videoID.length) < formHandler.numberofLinks) {
 							//
 							console.log(gatherURL.videoID.length);
 							var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(youtubeLink), gatherURL.videoID);
