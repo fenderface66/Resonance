@@ -1,7 +1,41 @@
+
+  .close, .minify {
+    float: right;
+    text-decoration: underline;
+  }
+
+  .minify {
+    margin-right: 10px;
+  }
+
+  .popupMinified {
+    position: fixed;
+    right: 5px;
+    top: 50px;
+    display: none;
+    background-color:  #FFE600;
+    z-index: 9999;
+    border-radius: 10px;
+    transition: .2s;
+  }
+
+  .popupMinified a {
+    font-family: sans-serif;
+    padding: 5px 8px;
+    display: block;
+  }
+
+  .popupMinified a:hover {
+    text-decoration: none;
+  }
+
+  .popupMinified:hover {
+    background-color: #E2D55C;
+  }
+
   .popupMain {
     display: none;
     position: fixed;
-    background-color: white;
     z-index: 99999;
     right: 5px;
     top: 50px;
