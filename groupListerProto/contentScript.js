@@ -104,26 +104,26 @@
     },
 
     popupClose: function() {
-			$('.close').click(function() {
-				$('.popupMain').remove();
-			})
+      $('.close').click(function() {
+        $('.popupMain').remove();
+      })
     },
 
-		popupMinify: function() {
-			$('.minify').click(function() {
-				$('.popupMain').slideUp('fast');
-				$('.popupMinified').show();
-			})
-			$('.open').click(function() {
-				$('.popupMain').slideDown('fast');
-				$('.popupMinified').hide();
-			})
+    popupMinify: function() {
+      $('.minify').click(function() {
+        $('.popupMain').slideUp('fast');
+        $('.popupMinified').show();
+      })
+      $('.open').click(function() {
+        $('.popupMain').slideDown('fast');
+        $('.popupMinified').hide();
+      })
     },
 
     init: function init() {
       formHandler.postLister();
-			formHandler.popupClose();
-			formHandler.popupMinify();
+      formHandler.popupClose();
+      formHandler.popupMinify();
       console.log('running formHandler');
       $('.existing').hide();
       $('.new').hide();
@@ -216,10 +216,10 @@
               $('.playlistName').text(formHandler.newName);
             } else {
               console.log('here');
-              // $.get("https://www.googleapis.com/youtube/v3/" + "playlists?part=snippet&id=" + formHandler.existingName + "&key=" + 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4', function (data) {
-              // 	$('.playlistName').text(data.items[0].snippet.title);
-              // 	console.log(data.items[0].snippet.title);
-              // });
+              $.get("https://www.googleapis.com/youtube/v3/" + "playlists?part=snippet&id=" + formHandler.existingName + "&key=" + 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4', function(data) {
+                $('.playlistName').text(data.items[0].snippet.title);
+                console.log(data.items[0].snippet.title);
+              });
               if ($('.playlistName').text() === '') {
                 $('.playlistName').text('Set playlist to public to see playlist name');
               }
@@ -242,19 +242,19 @@
                 duplicates = [];
                 duplicatesFound = [];
                 pages = 0;
-								finished = false;
+                finished = false;
                 //declare your function to run AJAX requests
                 function do_ajax() {
-									if (finished === false) {
-										$('.scanner-loader-container').fadeOut();
-										$('.loader-container').fadeIn();
-										$('.scanInfo').fadeIn();
-										$('.upload-title').fadeIn();
-										// $('.duplicates-message').fadeIn();
-										$('.numDuplicates').fadeIn();
-										$('.duplicates-number').fadeIn();
-										$('.duplicates-number').text(duplicatesFound.length);
-									}
+                  if (finished === false) {
+                    $('.scanner-loader-container').fadeOut();
+                    $('.loader-container').fadeIn();
+                    $('.scanInfo').fadeIn();
+                    $('.upload-title').fadeIn();
+                    // $('.duplicates-message').fadeIn();
+                    $('.numDuplicates').fadeIn();
+                    $('.duplicates-number').fadeIn();
+                    $('.duplicates-number').text(duplicatesFound.length);
+                  }
                   formHandler.idLength = formHandler.idArray.length;
                   //check to make sure there are more requests to make
                   if (current < ajaxes.length) {
@@ -334,14 +334,14 @@
                       console.log("Song added, data: ", data, request);
                       console.log(formHandler.idArray);
                       console.log('current step: ' + current);
-											console.log('Ajaxes.length - 1: ' + (ajaxes.length - 1));
+                      console.log('Ajaxes.length - 1: ' + (ajaxes.length - 1));
                       if (current >= (ajaxes.length - 1)) {
                         $('.loader-running').css({
                           'width': 294
                         });
                         $('.loader').removeClass('loader-running');
                         $('.loader-container').fadeOut();
-												finished = true;
+                        finished = true;
                         $('.success-message').fadeIn('fast');
                         if (formHandler.existingPlaylist === false) {
                           $('.success-message a').attr('href', 'https://www.youtube.com/playlist?list=' + formHandler.newPlaylistID);
@@ -685,41 +685,47 @@
         return videoID;
       },
 
-			anchorExtractor: function anchorExtractor(validator, regexItem, thisKeyword) {
-				if (validator == 'youtube.com') {
-					console.log('validationPassed');
-					$(thisKeyword).addClass('youtubeLink');
-					if ($(thisKeyword).hasClass('youtubeLink')) {
-						console.log('This is the number of youtube Links: ' + $('.youtubeLink').length);
-						if ((gatherURL.videoID.length) < formHandler.numberofLinks) {
-							console.log(gatherURL.videoID.length);
-							var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(regexItem), gatherURL.videoID);
-							if (found >= 0) {
-								// Element was found, remove it.
-								console.log('Already exists in scan Array: ' + found);
-							} else {
-								// Element was not found, add it.
-								if (gatherURL.regexFunctions.extractVideoID(regexItem) !== "") {
-									gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(regexItem));
-									if (formHandler.threadCounter === true) {
-										if (i == ($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1)) {
-											var links = gatherURL.videoID.length;
-											gatherURL.arrayCreated = true;
-											console.log('success');
-											chrome.storage.local.set({
-												'value': [gatherURL.videoID, links]
-											}, function() {
-												// Notify that we saved.
-												console.log('Settings saved');
-											});
-										}
-									}
-								}
-							}
-						}
-					}
-				}
-			},
+      anchorExtractor: function anchorExtractor(validator, regexItem, thisKeyword, iteration) {
+				console.log('extractor initiated')
+				console.log(validator)
+        if (validator.toLowerCase().indexOf("youtube") >= 0) {
+          console.log('validationPassed');
+          $(thisKeyword).addClass('youtubeLink');
+          if ($(thisKeyword).hasClass('youtubeLink')) {
+            console.log('This is the number of youtube Links: ' + $('.youtubeLink').length);
+            if ((gatherURL.videoID.length) < formHandler.numberofLinks || formHandler.threadCounter === true) {
+              console.log(gatherURL.videoID.length);
+              var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(regexItem), gatherURL.videoID);
+							console.log('found: ' + found);
+              if (found >= 0) {
+                // Element was found, remove it.
+                console.log('Already exists in scan Array: ' + found);
+              } else if (found < 0 || formHandler.threadCounter === true) {
+                // Element was not found, add it.
+                if (gatherURL.regexFunctions.extractVideoID(regexItem) !== "" || formHandler.threadCounter === true) {
+                  gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(regexItem));
+                  if (formHandler.threadCounter === true) {
+										console.log('iteration: ' + iteration);
+										console.log(($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1));
+                    if (iteration == ($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1)) {
+											console.log('passed4');
+                      var links = gatherURL.videoID.length;
+                      gatherURL.arrayCreated = true;
+                      console.log('success');
+                      chrome.storage.local.set({
+                        'value': [gatherURL.videoID, links]
+                      }, function() {
+                        // Notify that we saved.
+                        console.log('Settings saved');
+                      });
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
 
       findLink: function findLink() {
         console.log('Is this a threadcounter process: ' + formHandler.threadCounter);
@@ -728,42 +734,16 @@
           console.log($('.chosenThread').length);
           $('#contentCol #contentArea #pagelet_group_ .chosenThread').each(function(i) {
             console.log('activating function inside of chosen thread');
+						var youtubeLink = $(this).find('._6m3 .mbs').html();
+						var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
+						var iterator = i;
+						console.log('running extractor first time');
+						gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator);
             $(this).find('.UFICommentContent').each(function() {
               var checkYoutube = $(this).find('._3-8y ._6m3 ._59tj ._6lz').text();
               var youtubeLink = $(this).find('._6m3 .mbs').html();
-							gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this);
-              // if (checkYoutube == 'youtube.com') {
-              //   $(this).addClass('youtubeLink');
-              //   if ($(this).hasClass('youtubeLink')) {
-              //     console.log('This is the number of youtube Links: ' + $('.youtubeLink').length);
-              //     if ((gatherURL.videoID.length) < formHandler.numberofLinks) {
-              //       console.log(gatherURL.videoID.length);
-              //       var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(youtubeLink), gatherURL.videoID);
-              //       if (found >= 0) {
-              //         // Element was found, remove it.
-              //         console.log('Already exists in scan Array: ' + found);
-              //       } else {
-              //         // Element was not found, add it.
-              //         if (gatherURL.regexFunctions.extractVideoID(youtubeLink) !== "") {
-              //           gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(youtubeLink));
-							//
-              //           console.log(($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1));
-              //           if (i == ($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1)) {
-              //             var links = gatherURL.videoID.length;
-              //             gatherURL.arrayCreated = true;
-              //             console.log('success');
-              //             chrome.storage.local.set({
-              //               'value': [gatherURL.videoID, links]
-              //             }, function() {
-              //               // Notify that we saved.
-              //               console.log('Settings saved');
-              //             });
-              //           }
-              //         }
-              //       }
-              //     }
-              //   }
-              // }
+							console.log('running extractor second time');
+              gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator);
             });
           });
         } else {
@@ -772,27 +752,7 @@
             var youtubeLink = $(this).find('._6m3 .mbs').html();
             var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
             console.log('Total length equals: ' + i);
-						gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this);
-            // if (checkYoutube == 'youtube.com') {
-            //   $(this).addClass('youtubeLink');
-            //   if ($(this).hasClass('youtubeLink')) {
-            //     console.log('This is the number of youtube Links: ' + $('.youtubeLink').length);
-            //     if ((gatherURL.videoID.length) < formHandler.numberofLinks) {
-            //       console.log(gatherURL.videoID.length);
-            //       var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(youtubeLink), gatherURL.videoID);
-            //       if (found >= 0) {
-            //         // Element was found, remove it.
-            //         console.log('Already exists in scan Array: ' + found);
-            //       } else {
-            //         // Element was not found, add it.
-            //         if (gatherURL.regexFunctions.extractVideoID(youtubeLink) !== "") {
-            //           gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(youtubeLink));
-            //           console.log(gatherURL.regexFunctions.extractVideoID(youtubeLink));
-            //         }
-            //       }
-            //     }
-            //   }
-            // }
+            gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this);
           });
         }
       }
