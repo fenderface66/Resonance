@@ -14,7 +14,7 @@
     fn: {
       insert: function() {
         $('#facebook').prepend('<div class="popupMinified"><a class="open">Open</a></div><div class="popupMain"></div>');
-        $('.popupMain').fadeIn().prepend('<a class="close">Close</a><a class="minify">Minify</a><div class="scanner-loader-container"><div class="text-container"><h3>Now scanning page for links</h3><p>If you&rsquo;ve selected 100 or above links this may take a minute or two</p><p>Please refrain from clicking on the page or changing tabs whilst this is happening</p></div><img class="scanner-loader" src="chrome-extension://oaookbgdcpdjckcaikcdcjelpejmblpf/711.gif" /></div><form class="playlistInfo"><legend>Please Select Resonance Preferences</legend><fieldset><label>Would you like to put these songs into an existing playlist or a newly created one?</label><input class="existingPlaylist" type="radio" name="existingPlaylist" value="yes"> Existing Playlist<br><input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> New Playlist<br><div class="existing"><label for="oldPlaylist">What is the ID of this playlist?</label><input name="oldPlaylist" type="text" / placeholder="Playlist ID"><span class="explain">?</span><div class="explanation"><p>You can find your playlist ID by going to the playlist page on youtube and extracting it from the url</p><p><span class="explain-header">Example</span> <br><br> https://www.youtube.com/playlist?list=<strong>PLLE1K_p2t-JKUfeaaPCXqu8idT3wsOv4C</strong></p><p>The part in bold is your playlist ID</p>If this playlist is private its name will not appear in the upload info. It will however still have the links uploaded to it</p></div></div><div class="new"><label for="playlistName">Name of new playlist</label><input name="playlistName" type="text" / placeholder="Music Playlist"></div>			<label>Would you like to extract links by number or thread?</label><input class="numThread" type="radio" name="numThread" value="yes"> Number<br><input class="numThread" type="radio" name="numThread" value="no"> Thread<br><div class="linkNumberContainer"><label for="linkNumber">How many links would you like to add</label><select name="linkNumber"><option>5</option><option>10</option><option>20</option><option>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option><option>90</option><option>100</option><option>200</option></select></div><div class="threadCollecter"><p>Please click on the posts you would like to extract links from. When you are finished click done</p><p>Number of threads: <span class="threadNumber">Click done to see how many threads you have selected.</span></p><div class="doneButton">Done</div></div><div id="go">Let&rsquo;s Go</div></fieldset></form><div class="upload-title"><h2>Uploading Links to Youtube</h2></div><div class="loader-container"><div class="loader loader-running"></div></div><div class="scanInfo"><h3>Info</h3><p><strong>Playlist Name: </strong><span class="playlistName"></span><p><p><strong>Links to be added: </strong><span class="linkNumber"></span><p></div><div class="failed-uploads"><p><span class="errorNumber"></span> video<span class="plural">s</span><span class="plural2"> is</span> invalid and <span class="plural3">has</span> not been uploaded</p></div><p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p><div class="duplicates-message"><p class="all-duplicates">It appears that all the links you tried to add already exist in this playlist<p><p class="duplicatesAndErrors">It appears that all the links you tried to add either already exist in this playlist or were invalid links</p><p class="numDuplicates"><span class="duplicates-number"></span> duplicate<span class="plural5">s </span>have been found</p></div><p class="invalidPlaylist">The playlist id you gave seems to be invalid please make sure you have entered it correctly. Refresh and try again</p><div class="success-message"><p>Congratulations! Your playlist is now ready for you</p><a target="_blank" href="">Click here to be taken to it</a></div>');
+        $('.popupMain').fadeIn().prepend('<a class="close">Close</a><a class="minify">Minify</a><div class="scanner-loader-container"><div class="text-container"><h3>Now scanning page for links</h3><p>If you&rsquo;ve selected 100 or above links this may take a minute or two</p><p>Please refrain from clicking on the page or changing tabs whilst this is happening</p></div><img class="scanner-loader" src="chrome-extension://odgilfhpppnknabdpicciabekcnpnodj/711.gif" /></div><form class="playlistInfo"><legend>Please Select Resonance Preferences</legend><fieldset><label>Would you like to put these songs into an existing playlist or a newly created one?</label><input class="existingPlaylist" type="radio" name="existingPlaylist" value="yes"> Existing Playlist<br><input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> New Playlist<br><div class="existing"><label for="oldPlaylist">What is the ID of this playlist?</label><input name="oldPlaylist" type="text" / placeholder="Playlist ID"><span class="explain">?</span><div class="explanation"><p>You can find your playlist ID by going to the playlist page on youtube and extracting it from the url</p><p><span class="explain-header">Example</span> <br><br> https://www.youtube.com/playlist?list=<strong>PLLE1K_p2t-JKUfeaaPCXqu8idT3wsOv4C</strong></p><p>The part in bold is your playlist ID</p>If this playlist is private its name will not appear in the upload info. It will however still have the links uploaded to it</p></div></div><div class="new"><label for="playlistName">Name of new playlist</label><input name="playlistName" type="text" / placeholder="Music Playlist"></div>			<label>Would you like to extract links by number or thread?</label><input class="numThread" type="radio" name="numThread" value="yes"> Number<br><input class="numThread" type="radio" name="numThread" value="no"> Thread<br><div class="linkNumberContainer"><label for="linkNumber">How many links would you like to add</label><select name="linkNumber"><option>5</option><option>10</option><option>20</option><option>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option><option>90</option><option>100</option><option>200</option></select></div><div class="threadCollecter"><p>Please click on the posts you would like to extract links from. When you are finished click done</p><p>Number of threads: <span class="threadNumber">Click done to see how many threads you have selected.</span></p><div class="doneButton">Done</div></div><div id="go">Let&rsquo;s Go</div></fieldset></form><div class="upload-title"><h2>Uploading Links to Youtube</h2></div><div class="loader-container"><div class="loader loader-running"></div></div><div class="scanInfo"><h3>Info</h3><p><strong>Playlist Name: </strong><span class="playlistName"></span><p><p><strong>Links to be added: </strong><span class="linkNumber"></span><p></div><div class="failed-uploads"><p><span class="errorNumber"></span> video<span class="plural">s</span><span class="plural2"> is</span> invalid and <span class="plural3">has</span> not been uploaded</p></div><p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p><div class="duplicates-message"><p class="all-duplicates">It appears that all the links you tried to add already exist in this playlist<p><p class="duplicatesAndErrors">It appears that all the links you tried to add either already exist in this playlist or were invalid links</p><p class="numDuplicates"><span class="duplicates-number"></span> duplicate<span class="plural5">s </span>have been found</p></div><p class="invalidPlaylist">The playlist id you gave seems to be invalid please make sure you have entered it correctly. Refresh and try again</p><div class="success-message"><p>Congratulations! Your playlist is now ready for you</p><a target="_blank" href="">Click here to be taken to it</a></div>');
       }
 
     },
@@ -66,24 +66,31 @@
     },
     postLister: function postLister() {
       var finished = false;
+			var started = false;
+			$('.numThread[value="no"]').click(function() {
+				started = true;
+				console.log(started);
+			});
 
-      $('.mbm').click(function() {
-        console.log(this);
-        if (finished === false) {
-          $(this).toggleClass('chosenThread');
-        }
-      });
+			$('.mbm').click(function() {
+				console.log(this);
+				console.log(finished);
+				console.log(started);
+				if (finished === false && started === true) {
+					$(this).toggleClass('chosenThread');
+				}
+			});
 
-      $(document).on('DOMNodeInserted', function(e) {
-        if ($(e.target).is('.mbm')) {
-          $(e.target).click(function() {
-            console.log(this);
-            if (finished === false) {
-              $(this).toggleClass('chosenThread');
-            }
-          });
-        }
-      });
+			$(document).on('DOMNodeInserted', function(e) {
+					if ($(e.target).is('.mbm')) {
+						$(e.target).click(function() {
+							console.log(this);
+							if (finished === false && started === true) {
+								$(this).toggleClass('chosenThread');
+							}
+						});
+					}
+				});
 
       $('.doneButton').click(function() {
         finished = true;
@@ -686,8 +693,8 @@
       },
 
       anchorExtractor: function anchorExtractor(validator, regexItem, thisKeyword, iteration) {
-				console.log('extractor initiated')
-				console.log(validator)
+				console.log('extractor initiated');
+				console.log(validator);
         if (validator.toLowerCase().indexOf("youtube") >= 0) {
           console.log('validationPassed');
           $(thisKeyword).addClass('youtubeLink');

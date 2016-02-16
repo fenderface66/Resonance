@@ -2,6 +2,9 @@
   .close, .minify {
     float: right;
     text-decoration: underline;
+    color: rgb(65, 65, 65);
+    margin-bottom: 3px;
+    font-size: .6em;
   }
 
   .minify {
@@ -23,6 +26,9 @@
     font-family: sans-serif;
     padding: 5px 8px;
     display: block;
+    font-size: .8em;
+    text-decoration: none;
+    color: #666 !important;
   }
 
   .popupMinified a:hover {
@@ -40,8 +46,9 @@
     right: 5px;
     top: 50px;
     height: auto;
-    font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-    font-size: 100%;
+    font-family: 'lucida grande',tahoma,verdana,arial,sans-serif !important;
+    font-size: 16px;
+    color: #666;
     min-width: 300px;
     padding: 10px;
     background-color: #FFE600;
@@ -54,59 +61,62 @@
     display: none;
   }
 
-  a {
+  .popupMain a {
     color: #0F4DA8;
+    font-family: 'lucida grande',tahoma,verdana,arial,sans-serif !important;
   }
 
-  html {
+  .popupMain p {
     color: #414141;
-  }
-
-  p {
-    color: #414141;
+    font-family: 'lucida grande',tahoma,verdana,arial,sans-serif !important;
+    color: #666;
   }
 
   .playlistInfo {
     width: 350px;
   }
 
-  legend {
+  .popupMain legend {
     margin-top: 20px;
     padding-bottom: 5px;
     width: 100%;
     font-size: 1.3em;
     font-weight: bold;
+    font-family: 'lucida grande',tahoma,verdana,arial,sans-serif !important;
+    color: #666;
   }
 
-  fieldset {
+  .popupMain fieldset {
     border: 0;
     border-radius: 10px;
     padding-left: 0;
   }
 
-  fieldset >label:first-child {
+  .popupMain fieldset >label:first-child {
     margin-top: 0px;
   }
 
-  label,
-  input,
-  select,
-  legend {
+  .popupMain label,
+  .popupMain input,
+  .popupMain select,
+  .popupMain legend {
     margin: 4px 0;
-    color: #414141;
+    color: #666 !important;;
+    font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;
   }
 
-  label {
+  .popupMain label {
     margin-top: 20px;
+    font-size: 14px !important;
   }
 
-  label,
-  select,
-  legend {
+  .popupMain label,
+  .popupMain select,
+  .popupMain legend {
     display: block;
   }
 
-  input[type="text"] {
+  .popupMain input[type="text"] {
     padding: 5px;
     font-size: 16px;
   }
@@ -118,7 +128,7 @@
     cursor: pointer;
     -webkit-border-radius: 5px;
     border-radius: 5px;
-    margin-top: 20px;
+    margin-top: 30px;
     width: auto;
     border: 1px solid transparent;
     transition: .2s;
@@ -132,7 +142,7 @@
     background-color: #ECE9E9;
   }
 
-  select {
+  .popupMain select {
     display: block;
     margin-bottom: 10px;
   }
@@ -255,6 +265,7 @@
 
   .scan-info h3 {
     text-decoration: underline;
+    font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;
   }
   .invalidPlaylist {
     color: red;
