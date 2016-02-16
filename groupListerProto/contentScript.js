@@ -44,6 +44,7 @@
 		nextPageToken: '',
 		ajaxGetInitialised: false,
 		newLinkNumber: null,
+		threadCounter: false,
 		validFBurl: function validFBurl(enteredURL) {
 			var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
 			if(!enteredURL.match(FBurl)) {
@@ -65,12 +66,25 @@
 		},
 		postLister: function postLister() {
 			var finished = false;
+
 			$('.mbm').click(function() {
 				console.log(this);
 				if (finished === false) {
 					$(this).toggleClass('chosenThread');
 				}
 			});
+
+			$(document).on('DOMNodeInserted', function(e) {
+				if ($(e.target).is('.mbm')) {
+					$(e.target).click(function() {
+						console.log(this);
+						if (finished === false) {
+							$(this).toggleClass('chosenThread');
+						}
+					});
+    		}
+			});
+
 			$('.doneButton').click(function(){
 				finished = true;
 				$('.threadNumber').text($('.chosenThread').length);
@@ -139,7 +153,10 @@
 				}
 				formHandler.existingName = $('input[name="oldPlaylist"]').val();
 				formHandler.newName = $('input[name="playlistName"]').val();
-
+				if ($('.numThread[value="no"]').is(":checked")) {
+					formHandler.threadCounter = true;
+				}
+				console.log('formHandler.threadCounter = ' + formHandler.threadCounter);
 				console.log(formHandler.accessToken);
 				var accessToken = formHandler.accessToken;
 
@@ -165,7 +182,11 @@
 						console.log(formHandler.newPlaylistID);
 					});
 				})();
-				gatherURL.regexFunctions.topScroller(formHandler.numberofLinks);
+				if (formHandler.threadCounter === false) {
+					gatherURL.regexFunctions.topScroller(formHandler.numberofLinks);
+				} else {
+					gatherURL.regexFunctions.findLink();
+				}
 				chrome.storage.onChanged.addListener(function (changes, namespace) {
 					console.log("change received!");
 					setTimeout(function () {
@@ -598,8 +619,8 @@
 						console.log($('#contentArea .uiList').length);
 						console.log(gatherURL.stillScrolling);
 						if (gatherURL.stillScrolling === true) {
-							gatherURL.regexFunctions.topScroller(formHandler.numberofLinks);
 							gatherURL.regexFunctions.findLink();
+							gatherURL.regexFunctions.topScroller(formHandler.numberofLinks);
 						}
 						$(window).scrollEnd(function () {
 							console.log(gatherURL.stillScrolling);
@@ -645,27 +666,77 @@
 				return videoID;
 			},
 			findLink: function findLink() {
-				$('#contentCol #contentArea #pagelet_group_ .mtm').each(function (i) {
-					var youtubeLink = $(this).find('._6m3 .mbs').html();
-					var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
-					if(checkYoutube == 'youtube.com') {
-						if((gatherURL.videoID.length) < formHandler.numberofLinks) {
-							//
-							console.log(gatherURL.videoID.length);
-							var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(youtubeLink), gatherURL.videoID);
-							if(found >= 0) {
-								// Element was found, remove it.
-								gatherURL.videoID.splice(found, 1);
-							} else {
-								// Element was not found, add it.
-								if(gatherURL.regexFunctions.extractVideoID(youtubeLink) !== "") {
-									gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(youtubeLink));
-									console.log(gatherURL.regexFunctions.extractVideoID(youtubeLink));
+				console.log(formHandler.threadCounter);
+				if (formHandler.threadCounter === true) {
+					console.log('ThreadCounter running');
+					console.log($('.chosenThread').length);
+					$('#contentCol #contentArea #pagelet_group_ .chosenThread').each(function (i) {
+						console.log('activating function inside of chosen thread');
+						$(this).find('.UFICommentContent').each(function() {
+							var checkYoutube = $(this).find('._3-8y ._6m3 ._59tj ._6lz').text();
+							var youtubeLink = $(this).find('._6m3 .mbs').html();
+							if(checkYoutube == 'youtube.com') {
+								$(this).addClass('youtubeLink');
+								if ($(this).hasClass('youtubeLink')) {
+									console.log('This is the number of youtube Links: ' + $('.youtubeLink').length);
+									if((gatherURL.videoID.length) < formHandler.numberofLinks) {
+										console.log(gatherURL.videoID.length);
+										var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(youtubeLink), gatherURL.videoID);
+										if(found >= 0) {
+											// Element was found, remove it.
+											console.log('Already exists in scan Array: ' + found);
+										} else {
+											// Element was not found, add it.
+											if(gatherURL.regexFunctions.extractVideoID(youtubeLink) !== "") {
+												gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(youtubeLink));
+
+												console.log(($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1));
+												if (i == ($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1)) {
+													var links = gatherURL.videoID.length;
+													gatherURL.arrayCreated = true;
+													console.log('success');
+													chrome.storage.local.set({
+														'value': [gatherURL.videoID, links]
+													}, function () {
+														// Notify that we saved.
+														console.log('Settings saved');
+													});
+												}
+											}
+										}
+									}
+								}
+							}
+						});
+					});
+				} else {
+					$('#contentCol #contentArea #pagelet_group_ .mbm .mtm').not(".marked").each(function (i) {
+						$(this).addClass('marked');
+						var youtubeLink = $(this).find('._6m3 .mbs').html();
+						var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
+						console.log('Total length equals: ' + i);
+						if(checkYoutube == 'youtube.com') {
+							$(this).addClass('youtubeLink');
+							if ($(this).hasClass('youtubeLink')) {
+								console.log('This is the number of youtube Links: ' + $('.youtubeLink').length);
+								if((gatherURL.videoID.length) < formHandler.numberofLinks) {
+									console.log(gatherURL.videoID.length);
+									var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(youtubeLink), gatherURL.videoID);
+									if(found >= 0) {
+										// Element was found, remove it.
+										console.log('Already exists in scan Array: ' + found);
+									} else {
+										// Element was not found, add it.
+										if(gatherURL.regexFunctions.extractVideoID(youtubeLink) !== "") {
+											gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(youtubeLink));
+											console.log(gatherURL.regexFunctions.extractVideoID(youtubeLink));
+										}
+									}
 								}
 							}
 						}
-					}
-				});
+					});
+				}
 			}
 		},
 	};
