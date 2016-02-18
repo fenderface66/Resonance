@@ -7,8 +7,29 @@
     font-size: .6em;
   }
 
+  .notLinkThread {
+    display: none;
+  }
+
   .minify {
     margin-right: 10px;
+  }
+
+  .upload-title h2  {
+    color: #666 !important;
+    font-size: 22px;
+  }
+
+  .scanInfo h3 {
+    font-size: 18px;
+    margin-top: 10px;
+    color: #666 !important;
+    text-decoration: underline;
+    margin-bottom: 0;
+  }
+
+  .scanInfo p:first-child {
+    margin-top: 2px;
   }
 
   .popupMinified {
