@@ -28,6 +28,10 @@
     margin-bottom: 0;
   }
 
+  .invalidToken {
+    display: none;
+  }
+
   .scanInfo p:first-child {
     margin-top: 2px;
   }

@@ -14,9 +14,8 @@
     fn: {
       insert: function() {
         $('#facebook').prepend('<div class="popupMinified"><a class="open">Open</a></div><div class="popupMain"></div>');
-        $('.popupMain').fadeIn().prepend('<a class="close">Close</a><a class="minify">Minify</a><div class="notLinkThread"><p>It looks like the thread(s) you selected contain(s) no youtube links</p></div><div class="scanner-loader-container"><div class="text-container"><h3>Now scanning page for links</h3><p>If you&rsquo;ve selected 100 or above links this may take a minute or two</p><p>Please refrain from clicking on the page or changing tabs whilst this is happening</p></div><img class="scanner-loader" src="chrome-extension://odgilfhpppnknabdpicciabekcnpnodj/711.gif" /></div><form class="playlistInfo"><legend>Please Select Resonance Preferences</legend><fieldset><label>Would you like to put these songs into an existing playlist or a newly created one?</label><input class="existingPlaylist" type="radio" name="existingPlaylist" value="yes"> Existing Playlist<br><input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> New Playlist<br><div class="existing"><label for="oldPlaylist">What is the ID of this playlist?</label><input name="oldPlaylist" type="text" / placeholder="Playlist ID"><span class="explain">?</span><div class="explanation"><p>You can find your playlist ID by going to the playlist page on youtube and extracting it from the url</p><p><span class="explain-header">Example</span> <br><br> https://www.youtube.com/playlist?list=<strong>PLLE1K_p2t-JKUfeaaPCXqu8idT3wsOv4C</strong></p><p>The part in bold is your playlist ID</p>If this playlist is private its name will not appear in the upload info. It will however still have the links uploaded to it</p></div></div><div class="new"><label for="playlistName">Name of new playlist</label><input name="playlistName" type="text" / placeholder="Music Playlist"></div>			<label>Would you like to extract links by number or thread?</label><input class="numThread" type="radio" name="numThread" value="yes"> Number<br><input class="numThread" type="radio" name="numThread" value="no"> Thread<br><div class="linkNumberContainer"><label for="linkNumber">How many links would you like to add</label><select name="linkNumber"><option>5</option><option>10</option><option>20</option><option>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option><option>90</option><option>100</option><option>200</option></select></div><div class="threadCollecter"><p>Please click on the posts you would like to extract links from. When you are finished click done</p><p>Number of threads: <span class="threadNumber">Click done to see how many threads you have selected.</span></p><div class="doneButton">Done</div></div><div id="go">Let&rsquo;s Go</div></fieldset></form><div class="upload-title"><h2>Uploading Links to Youtube</h2></div><div class="loader-container"><div class="loader loader-running"></div></div><div class="scanInfo"><h3>Info</h3><p><strong>Playlist Name: </strong><span class="playlistName"></span><p><p><strong>Links to be added: </strong><span class="linkNumber"></span><p></div><div class="failed-uploads"><p><span class="errorNumber"></span> video<span class="plural">s</span><span class="plural2"> is</span> invalid and <span class="plural3">has</span> not been uploaded</p></div><p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p><div class="duplicates-message"><p class="all-duplicates">It appears that all the links you tried to add already exist in this playlist<p><p class="duplicatesAndErrors">It appears that all the links you tried to add either already exist in this playlist or were invalid links</p><p class="numDuplicates"><span class="duplicates-number"></span> duplicate<span class="plural5">s </span>have been found</p></div><p class="invalidPlaylist">The playlist id you gave seems to be invalid please make sure you have entered it correctly. Refresh and try again</p><div class="success-message"><p>Congratulations! Your playlist is now ready for you</p><a target="_blank" href="">Click here to be taken to it</a></div>');
+        $('.popupMain').fadeIn().prepend('<a class="close">Close</a><a class="minify">Minify</a><div class="invalidToken"><p>It looks like something went wrong with accessing Youtube, this sometimes happens, please refresh and try again</p></div><div class="notLinkThread"><p>It looks like the thread(s) you selected contain(s) no youtube links</p></div><div class="scanner-loader-container"><div class="text-container"><h3>Now scanning page for links</h3><p>If you&rsquo;ve selected 100 or above links this may take a minute or two</p><p>Please refrain from clicking on the page or changing tabs whilst this is happening</p></div><img class="scanner-loader" src="chrome-extension://odgilfhpppnknabdpicciabekcnpnodj/711.gif" /></div><form class="playlistInfo"><legend>Please Select Resonance Preferences</legend><fieldset><label>Would you like to put these songs into an existing playlist or a newly created one?</label><input class="existingPlaylist" type="radio" name="existingPlaylist" value="yes"> Existing Playlist<br><input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> New Playlist<br><div class="existing"><label for="oldPlaylist">What is the ID of this playlist?</label><input name="oldPlaylist" type="text" / placeholder="Playlist ID"><span class="explain">?</span><div class="explanation"><p>You can find your playlist ID by going to the playlist page on youtube and extracting it from the url</p><p><span class="explain-header">Example</span> <br><br> https://www.youtube.com/playlist?list=<strong>PLLE1K_p2t-JKUfeaaPCXqu8idT3wsOv4C</strong></p><p>The part in bold is your playlist ID</p>If this playlist is private its name will not appear in the upload info. It will however still have the links uploaded to it</p></div></div><div class="new"><label for="playlistName">Name of new playlist</label><input name="playlistName" type="text" / placeholder="Music Playlist"></div>			<label>Would you like to extract links by number or thread?</label><input class="numThread" type="radio" name="numThread" value="yes"> Number<br><input class="numThread" type="radio" name="numThread" value="no"> Thread<br><div class="linkNumberContainer"><label for="linkNumber">How many links would you like to add</label><select name="linkNumber"><option>5</option><option>10</option><option>20</option><option>30</option><option>40</option><option>50</option><option>60</option><option>70</option><option>80</option><option>90</option><option>100</option><option>200</option></select></div><div class="threadCollecter"><p>Please click on the posts you would like to extract links from. When you are finished click done</p><p>Number of threads: <span class="threadNumber">Click done to see how many threads you have selected.</span></p><div class="doneButton">Done</div></div><div id="go">Let&rsquo;s Go</div></fieldset></form><div class="upload-title"><h2>Uploading Links to Youtube</h2></div><div class="loader-container"><div class="loader loader-running"></div></div><div class="scanInfo"><h3>Info</h3><p><strong>Playlist Name: </strong><span class="playlistName"></span><p><p><strong>Links to be added: </strong><span class="linkNumber"></span><p></div><div class="failed-uploads"><p><span class="errorNumber"></span> video<span class="plural">s</span><span class="plural2"> is</span> invalid and <span class="plural3">has</span> not been uploaded</p></div><p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p><div class="duplicates-message"><p class="all-duplicates">It appears that all the links you tried to add already exist in this playlist<p><p class="duplicatesAndErrors">It appears that all the links you tried to add either already exist in this playlist or were invalid links</p><p class="numDuplicates"><span class="duplicates-number"></span> duplicate<span class="plural5">s </span>have been found</p></div><p class="invalidPlaylist">The playlist id you gave seems to be invalid please make sure you have entered it correctly. Refresh and try again</p><div class="success-message"><p>Congratulations! Your playlist is now ready for you</p><a target="_blank" href="">Click here to be taken to it</a></div>');
       }
-
     },
     init: function() {
       console.log('running insert');
@@ -66,31 +65,31 @@
     },
     postLister: function postLister() {
       var finished = false;
-			var started = false;
-			$('.numThread[value="no"]').click(function() {
-				started = true;
-				console.log(started);
-			});
+      var started = false;
+      $('.numThread[value="no"]').click(function() {
+        started = true;
+        console.log(started);
+      });
 
-			$('.mbm').click(function() {
-				console.log(this);
-				console.log(finished);
-				console.log(started);
-				if (finished === false && started === true) {
-					$(this).toggleClass('chosenThread');
-				}
-			});
+      $('.mbm').click(function() {
+        console.log(this);
+        console.log(finished);
+        console.log(started);
+        if (finished === false && started === true) {
+          $(this).toggleClass('chosenThread');
+        }
+      });
 
-			$(document).on('DOMNodeInserted', function(e) {
-					if ($(e.target).is('.mbm')) {
-						$(e.target).click(function() {
-							console.log(this);
-							if (finished === false && started === true) {
-								$(this).toggleClass('chosenThread');
-							}
-						});
-					}
-				});
+      $(document).on('DOMNodeInserted', function(e) {
+        if ($(e.target).is('.mbm')) {
+          $(e.target).click(function() {
+            console.log(this);
+            if (finished === false && started === true) {
+              $(this).toggleClass('chosenThread');
+            }
+          });
+        }
+      });
 
       $('.doneButton').click(function() {
         finished = true;
@@ -185,6 +184,10 @@
         }
         console.log('formHandler.threadCounter = ' + formHandler.threadCounter);
         console.log(formHandler.accessToken);
+        if (formHandler.accessToken === undefined) {
+          $('.popupMain > div').hide();
+          $('.invalidToken').show();
+        }
         var accessToken = formHandler.accessToken;
 
         (function() {
@@ -212,6 +215,7 @@
         if (formHandler.threadCounter === false) {
           gatherURL.regexFunctions.topScroller(formHandler.numberofLinks);
         } else {
+          console.log('running thread counter find link() function');
           gatherURL.regexFunctions.findLink();
         }
         chrome.storage.onChanged.addListener(function(changes, namespace) {
@@ -250,7 +254,7 @@
                 duplicatesFound = [];
                 pages = 0;
                 finished = false;
-                //declare your function to run AJAX requests
+                //declare function to run AJAX requests
                 function do_ajax() {
                   if (finished === false) {
                     $('.scanner-loader-container').fadeOut();
@@ -616,6 +620,7 @@
       scrolled: false,
       arrayCreated: null,
       accessToken: null,
+      extractorIteration: 0,
       invalidThread: 0,
       successThread: 0,
       secondRun: false,
@@ -698,8 +703,8 @@
       },
 
       anchorExtractor: function anchorExtractor(validator, regexItem, thisKeyword, iteration) {
-				console.log('extractor initiated');
-				console.log(validator);
+        console.log('extractor initiated');
+        console.log(validator);
         if (validator === '') {
           console.log('if1 passed');
           gatherURL.receivedData.invalidThread += 1;
@@ -708,16 +713,9 @@
             console.log('errorCount: ' + gatherURL.receivedData.invalidThread);
             console.log('iteration: ' + iteration);
             console.log('if2 passed');
-
           }
-        }
-        else {
-          gatherURL.receivedData.successThread +=1;
-        }
-
-        if (gatherURL.receivedData.secondRun === true && gatherURL.receivedData.invalidThread > 0 && gatherURL.receivedData.successThread === 0) {
-          $('.scanner-loader-container').hide();
-          $('.notLinkThread').show();
+        } else {
+          gatherURL.receivedData.successThread += 1;
         }
         console.log('errorCount: ' + gatherURL.receivedData.invalidThread);
         console.log('successCount: ' + gatherURL.receivedData.successThread);
@@ -731,7 +729,7 @@
             if ((gatherURL.videoID.length) < formHandler.numberofLinks || formHandler.threadCounter === true) {
               console.log(gatherURL.videoID.length);
               var found = jQuery.inArray(gatherURL.regexFunctions.extractVideoID(regexItem), gatherURL.videoID);
-							console.log('found: ' + found);
+              console.log('found: ' + found);
               if (found >= 0) {
                 // Element was found, remove it.
                 console.log('Already exists in scan Array: ' + found);
@@ -741,13 +739,19 @@
                   console.log(gatherURL.regexFunctions.extractVideoID(regexItem));
                   gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(regexItem));
                   if (formHandler.threadCounter === true) {
-										console.log('iteration: ' + iteration);
-										console.log(($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1));
+                    console.log('iteration: ' + iteration);
+                    console.log(($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1));
                     if (iteration == ($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1)) {
-											console.log('passed4');
+                      console.log('passed4');
                       var links = gatherURL.videoID.length;
                       gatherURL.arrayCreated = true;
                       console.log('success');
+                      if (gatherURL.receivedData.secondRun === true && gatherURL.receivedData.invalidThread > 0 && gatherURL.receivedData.successThread === 0) {
+                        $('.scanner-loader-container').hide();
+                        $('.notLinkThread').show();
+                        console.log('this one is running');
+                        // $('.chosenThread').removeClass('chosenThread');
+                      }
                       chrome.storage.local.set({
                         'value': [gatherURL.videoID, links]
                       }, function() {
@@ -770,16 +774,22 @@
           console.log($('.chosenThread').length);
           $('#contentCol #contentArea #pagelet_group_ .chosenThread').each(function(i) {
             console.log('activating function inside of chosen thread');
-						var youtubeLink = $(this).find('._6m3 .mbs').html();
-						var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
-						var iterator = i;
-						console.log('running extractor first time');
-						gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator);
-            $(this).find('.UFICommentContent').each(function() {
+            var youtubeLink = $(this).find('._6m3 .mbs').html();
+            var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
+            var iterator;
+            gatherURL.receivedData.extractorIteration += (i + 1);
+            iterator =  gatherURL.receivedData.extractorIteration;
+            console.log(iterator);
+            console.log('running extractor first time');
+            gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator);
+            $(this).find('.UFICommentContent').each(function(j) {
               var checkYoutube = $(this).find('._3-8y ._6m3 ._59tj ._6lz').text();
               var youtubeLink = $(this).find('._6m3 .mbs').html();
+              gatherURL.receivedData.extractorIteration += (j + 1);
+              iterator =  gatherURL.receivedData.extractorIteration;
               gatherURL.receivedData.secondRun = true;
-							console.log('running extractor second time');
+              console.log(iterator);
+              console.log('running extractor second time');
               gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator);
             });
           });
