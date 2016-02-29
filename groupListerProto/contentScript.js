@@ -10,6 +10,10 @@
     });
   };
 
+  function hasValue(obj, key, value) {
+    return obj.hasOwnProperty(key) && obj[key] === value;
+  }
+
   var createPopup = {
     fn: {
       insert: function() {
@@ -44,6 +48,7 @@
     ajaxGetInitialised: false,
     newLinkNumber: null,
     threadCounter: false,
+    changesCompleted: false,
     validFBurl: function validFBurl(enteredURL) {
       var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
       if (!enteredURL.match(FBurl)) {
@@ -99,7 +104,7 @@
           $(this).find('._524d a').click(function() {
             event.preventDefault();
           });
-          $(this).find('._524d a span:last-child').trigger('click');
+          $(this).find('.UFIContainer .UFIPagerLink').trigger('click');
           console.log('running');
           if ($(this).find('.UFIPagerLink').length) {
             console.log('success');
@@ -130,6 +135,7 @@
       formHandler.postLister();
       formHandler.popupClose();
       formHandler.popupMinify();
+
       console.log('running formHandler');
       $('.existing').hide();
       $('.new').hide();
@@ -216,21 +222,24 @@
           gatherURL.regexFunctions.topScroller(formHandler.numberofLinks);
         } else {
           console.log('running thread counter find link() function');
-          gatherURL.regexFunctions.findLink();
+          setTimeout(function() {
+            gatherURL.regexFunctions.findLink();
+          }, 500);
         }
         chrome.storage.onChanged.addListener(function(changes, namespace) {
+          formHandler.changesCompleted = true;
           console.log("change received!");
+          console.log(changes);
           setTimeout(function() {
-
-
             if (formHandler.existingPlaylist === false) {
               $('.playlistName').text(formHandler.newName);
             } else {
               console.log('here');
-              $.get("https://www.googleapis.com/youtube/v3/" + "playlists?part=snippet&id=" + formHandler.existingName + "&key=" + 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4', function(data) {
-                $('.playlistName').text(data.items[0].snippet.title);
-                console.log(data.items[0].snippet.title);
-              });
+              // $.get("https://www.googleapis.com/youtube/v3/" + "playlists?part=snippet&id=" + formHandler.existingName + "&key=" + 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4', function(data) {
+              //   console.log(data);
+              //   $('.playlistName').text(data.items[0].snippet.title);
+              //   console.log(data.items[0].snippet.title);
+              // });
               if ($('.playlistName').text() === '') {
                 $('.playlistName').text('Set playlist to public to see playlist name');
               }
@@ -239,8 +248,8 @@
               formHandler.idArray = obj.value[0];
               formHandler.idLength = formHandler.idArray.length;
               formHandler.originalList = formHandler.idArray.slice(0);
-              console.log(formHandler.originalList);
-              console.log(formHandler.idLength);
+              console.log('These are the received ids: ' + formHandler.originalList);
+              console.log('Number of ids received: ' + formHandler.idLength);
               formHandler.receivedLinks = obj.value[1];
               if (formHandler.receivedLinks < formHandler.numberofLinks && formHandler.threadCounter === false) {
                 $('.scanInfo').append('<p>It appears that the total number of links on this page was <strong>' + (formHandler.numberofLinks - formHandler.receivedLinks) + '</strong> links less then what you selected. </p>');
@@ -285,6 +294,7 @@
                       success: function(serverResponse) {
                         //increment the `current` counter and recursively call this function again
                         current++;
+                        console.log('This has been a success');
                         var adjustedCount = formHandler.newLinkNumber - errorCount;
                         console.log('Links minus errors: ' + adjustedCount);
                         $('.linkNumber').text(adjustedCount);
@@ -489,7 +499,7 @@
                     console.log(formHandler.originalList);
                     console.log("Duplicates data: ", data, request);
                     console.log(data.items.length);
-                    if (data.items.length > 1) {
+                    if (data.items.length >= 1) {
                       var found = '';
                       console.log('Existing playlist ids ' + data.items[0].snippet.resourceId.videoId);
 
@@ -526,6 +536,7 @@
                               } else {
                                 console.log('running do_ajax()');
                                 (function ajaxArray() {
+                                  console.log(formHandler.existingName);
                                   for (var i = 0; i < formHandler.idArray.length; i++) {
                                     var metadata = {
                                       snippet: {
@@ -618,12 +629,14 @@
       existingName: null,
       stillScrolling: null,
       scrolled: false,
-      arrayCreated: null,
+      arrayCreated: false,
       accessToken: null,
       extractorIteration: 0,
       invalidThread: 0,
       successThread: 0,
+      threadCount: 0,
       secondRun: false,
+      dataStored: false,
       request: function request() {
         var port = chrome.runtime.connect({
           name: "popup.js"
@@ -638,6 +651,20 @@
     },
     videoID: [],
     regexFunctions: {
+
+      chromeStorage: function chromeStorage(idArray, linkLength) {
+        setTimeout(function() {
+          console.log('These items will be sent: ' + idArray);
+          chrome.storage.local.set({
+            'value': [idArray, linkLength]
+          }, function() {
+            // Notify that we saved.
+            console.log('Settings saved');
+            console.log('These items will be sent: ' + idArray);
+          });
+        }, 100);
+      },
+
       topScroller: function topScroller(scrollNumber) {
         if (gatherURL.scrolled === undefined) {
           console.log('running');
@@ -663,13 +690,8 @@
               gatherURL.stillScrolling = false;
               var links = gatherURL.videoID.length;
               if (gatherURL.arrayCreated === undefined) {
-                gatherURL.arrayCreated = true;
-                chrome.storage.local.set({
-                  'value': [gatherURL.videoID, links]
-                }, function() {
-                  // Notify that we saved.
-                  console.log('Settings saved');
-                });
+                gatherURL.receivedData.rrayCreated = true;
+                gatherURL.regexFunctions.chromeStorage(gatherURL.videoID, links);
               }
             }, 5000);
           } else if (gatherURL.videoID.length == scrollNumber) {
@@ -677,20 +699,17 @@
             var links = gatherURL.videoID.length;
             // Save it using the Chrome extension storage API.
             console.log(gatherURL.arrayCreated);
-            if (gatherURL.arrayCreated === undefined) {
-              gatherURL.arrayCreated = true;
-              chrome.storage.local.set({
-                'value': [gatherURL.videoID, links]
-              }, function() {
-                // Notify that we saved.
-                console.log('Settings saved');
-              });
+            if (gatherURL.receivedData.arrayCreated === undefined) {
+              gatherURL.receivedData.rrayCreated = true;
+              gatherURL.regexFunctions.chromeStorage(gatherURL.videoID, links);
             }
           }
         }, 1000);
       },
       extractVideoID: function extractVideoID(url) {
-        var matches = url.match("(youtu\.be\\?\/|v=)([a-zA-Z0-9\_\-]+)&?");
+        var matches = url.toString().match("(youtu\.be\\\\?\/|v=)([a-zA-Z0-9\_\-]+)&?");
+        console.log(url);
+        console.log(matches);
         var regExp = '';
         for (var i in matches) {
           if (matches[i].match("^[a-zA-Z0-9\_\-]+$")) {
@@ -702,7 +721,7 @@
         return videoID;
       },
 
-      anchorExtractor: function anchorExtractor(validator, regexItem, thisKeyword, iteration) {
+      anchorExtractor: function anchorExtractor(validator, regexItem, thisKeyword, iteration, linkCount) {
         console.log('extractor initiated');
         console.log(validator);
         if (validator === '') {
@@ -719,8 +738,9 @@
         }
         console.log('errorCount: ' + gatherURL.receivedData.invalidThread);
         console.log('successCount: ' + gatherURL.receivedData.successThread);
-        console.log('iteration: ' + iteration);
+        console.log('threadCount/iteration: ' + gatherURL.receivedData.threadCount);
         console.log('regex item: ' + regexItem);
+        console.log('linkCount: ' + linkCount);
         if (validator.toLowerCase().indexOf("youtube") >= 0) {
           console.log('validationPassed');
           $(thisKeyword).addClass('youtubeLink');
@@ -735,16 +755,17 @@
                 console.log('Already exists in scan Array: ' + found);
               } else if (found < 0 || formHandler.threadCounter === true) {
                 // Element was not found, add it.
-                if (gatherURL.regexFunctions.extractVideoID(regexItem) !== "" || formHandler.threadCounter === true) {
+                console.log('This is the extracted ID: ' + gatherURL.regexFunctions.extractVideoID(regexItem));
+                if (gatherURL.regexFunctions.extractVideoID(regexItem) !== "") {
                   console.log(gatherURL.regexFunctions.extractVideoID(regexItem));
                   gatherURL.videoID.push(gatherURL.regexFunctions.extractVideoID(regexItem));
+                  console.log(gatherURL.videoID);
                   if (formHandler.threadCounter === true) {
-                    console.log('iteration: ' + iteration);
-                    console.log(($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1));
+                    console.log('This is the iteration we are on: ' + iteration);
+                    console.log('This is the length of threads selected: ' + ($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1));
                     if (iteration == ($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1)) {
                       console.log('passed4');
                       var links = gatherURL.videoID.length;
-                      gatherURL.arrayCreated = true;
                       console.log('success');
                       if (gatherURL.receivedData.secondRun === true && gatherURL.receivedData.invalidThread > 0 && gatherURL.receivedData.successThread === 0) {
                         $('.scanner-loader-container').hide();
@@ -752,45 +773,62 @@
                         console.log('this one is running');
                         // $('.chosenThread').removeClass('chosenThread');
                       }
-                      chrome.storage.local.set({
-                        'value': [gatherURL.videoID, links]
-                      }, function() {
-                        // Notify that we saved.
-                        console.log('Settings saved');
-                      });
+                      console.log('arrayCreated: ' + gatherURL.receivedData.arrayCreated);
+                      if (gatherURL.receivedData.arrayCreated === false) {
+                        gatherURL.receivedData.arrayCreated = true;
+                        console.log(gatherURL.videoID);
+                        gatherURL.regexFunctions.chromeStorage(gatherURL.videoID, links);
+                      }
                     }
                   }
+                }
+                else {
+                  console.log('This is the failed extraction: ' + gatherURL.regexFunctions.extractVideoID(regexItem));
                 }
               }
             }
           }
+        } else {
+          console.log('linkCount: ' + linkCount);
         }
       },
 
       findLink: function findLink() {
         console.log('Is this a threadcounter process: ' + formHandler.threadCounter);
         if (formHandler.threadCounter === true) {
+          console.log('threadCount: ' + gatherURL.receivedData.threadCount);
           console.log('ThreadCounter running');
           console.log($('.chosenThread').length);
           $('#contentCol #contentArea #pagelet_group_ .chosenThread').each(function(i) {
             console.log('activating function inside of chosen thread');
             var youtubeLink = $(this).find('._6m3 .mbs').html();
             var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
-            var iterator;
-            gatherURL.receivedData.extractorIteration += (i + 1);
-            iterator =  gatherURL.receivedData.extractorIteration;
+            var iterator = gatherURL.receivedData.threadCount;
+            var linkCount;
+            gatherURL.receivedData.threadCount += 1;
+            if (i === 0) {
+              gatherURL.receivedData.extractorIteration += (i + 1);
+            } else {
+              gatherURL.receivedData.extractorIteration += i;
+            }
+            linkCount = gatherURL.receivedData.extractorIteration;
             console.log(iterator);
             console.log('running extractor first time');
-            gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator);
+            gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator, linkCount);
             $(this).find('.UFICommentContent').each(function(j) {
               var checkYoutube = $(this).find('._3-8y ._6m3 ._59tj ._6lz').text();
               var youtubeLink = $(this).find('._6m3 .mbs').html();
-              gatherURL.receivedData.extractorIteration += (j + 1);
-              iterator =  gatherURL.receivedData.extractorIteration;
+              if (j === 0) {
+                gatherURL.receivedData.extractorIteration += (j + 1);
+              } else {
+                gatherURL.receivedData.extractorIteration += j;
+              }
+
+              linkCount = gatherURL.receivedData.extractorIteration;
               gatherURL.receivedData.secondRun = true;
               console.log(iterator);
               console.log('running extractor second time');
-              gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator);
+              gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator, linkCount);
             });
           });
         } else {
