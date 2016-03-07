@@ -224,7 +224,7 @@
           console.log('running thread counter find link() function');
           setTimeout(function() {
             gatherURL.regexFunctions.findLink();
-          }, 500);
+          }, 2000);
         }
         chrome.storage.onChanged.addListener(function(changes, namespace) {
           formHandler.changesCompleted = true;
