@@ -40,6 +40,7 @@ var initiator = {
 
 $(document).ready(function () {
 	google.authorize(function () {
+
 		var accessToken = google.getAccessToken();
 		console.log(accessToken);
 		setTimeout(function() {
@@ -49,6 +50,7 @@ $(document).ready(function () {
 					accessToken: accessToken,
 				});
 			});
+
 		}, 100);
 
 		chrome.tabs.query({
@@ -61,4 +63,5 @@ $(document).ready(function () {
 			initiator.validFBurl(tab[0].url);
 		});
 	});
+
 });
