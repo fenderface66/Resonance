@@ -51,6 +51,7 @@
     changesCompleted: false,
     threadStart: false,
     threadFinish: false,
+    pageCount: 0,
     validFBurl: function validFBurl(enteredURL) {
       var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
       if (!enteredURL.match(FBurl)) {
@@ -70,13 +71,24 @@
         });
       }
     },
+
+    intervalCheck: function intervalCheck(handle, elem) {
+
+      console.log('Running');
+      handle.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+      elem.dispatchEvent(handle);
+      console.log(formHandler.pageCount);
+      formHandler.pageCount += 1;
+
+    },
+
+
     postLister: function postLister() {
       $('.numThread[value="no"]').click(function() {
         formHandler.threadStart = true;
       });
 
       $('.mbm').click(function() {
-        console.log(this);
 
         if (formHandler.threadFinish === false && formHandler.threadStart === true) {
           $(this).toggleClass('chosenThread');
@@ -109,16 +121,25 @@
             var one = $(this).find('.UFIPagerLink span');
             var two = $(this).find('.UFIPagerLink');
             var three = $(this).find('.UFIRow');
-            console.log(one);
-            console.log(two);
-            console.log(three);
             var e = document.createEvent("MouseEvents");
+            var interval = null;
+
             e.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
             two[0].dispatchEvent(e);
-            two.dispatchEvent(e);
             $(this).find('.UFIPagerLink span').trigger('click');
             $(this).find('.UFIPagerLink').trigger('click');
             $(this).find('._4oep').trigger('click');
+            $('.threadCollecter').append('<h2 class="threadWarning">Opening Thread, please wait</h2>');
+            $('#go').fadeOut();
+            interval = setInterval(function() {
+              formHandler.intervalCheck(e, two[0]);
+              if (formHandler.pageCount > 6) {
+                console.log(formHandler.pageCount);
+                clearInterval(interval);
+                $('.threadWarning').text("Thread opened, you may now click Let's Go");
+                $('#go').fadeIn();
+              }
+            }, 1000);
           }
         });
       });
@@ -294,6 +315,7 @@
                   //check to make sure there are more requests to make
                   if (current < ajaxes.length) {
                     console.log(ajaxes[current]);
+                    console.log('Acces Token: ' + accessToken);
                     var percentage = current / ajaxes.length;
                     //make the AJAX request with the given data from the `ajaxes` array of objects
                     $.ajax({
@@ -658,8 +680,10 @@
           if (message.greeting == 'hello') {
             console.log(message.accessToken);
             formHandler.accessToken = message.accessToken;
+            return true;
           }
         });
+
       }
     },
     videoID: [],
@@ -857,9 +881,18 @@
     },
   };
   gatherURL.receivedData.request();
-  setTimeout(function() {
-    createPopup.init();
-    formHandler.init();
-    window.close();
+  var requestInterval;
+  requestInterval = setInterval(function() {
+    if (formHandler.accessToken !== undefined) {
+      console.log(formHandler.accessToken);
+      createPopup.init();
+      formHandler.init();
+      clearInterval(requestInterval);
+    }
+
+  }, 80);
+  setTimeout(function(){
+      window.close();
   }, 300);
+
 })(jQuery);
