@@ -137,6 +137,7 @@
                 console.log(formHandler.pageCount);
                 clearInterval(interval);
                 $('.threadWarning').text("Thread opened, you may now click Let's Go");
+                $('.doneButton').fadeOut();
                 $('#go').fadeIn();
               }
             }, 1000);
