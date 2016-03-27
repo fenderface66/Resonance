@@ -10,9 +10,10 @@
     });
   };
 
-  function hasValue(obj, key, value) {
-    return obj.hasOwnProperty(key) && obj[key] === value;
-  }
+  //UNNESCESSARY FOR NOW
+  // function hasValue(obj, key, value) {
+  //   return obj.hasOwnProperty(key) && obj[key] === value;
+  // }
 
   var createPopup = {
     fn: {
@@ -27,13 +28,7 @@
     }
   };
 
-  var google = new OAuth2('google', {
-    client_id: '167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h',
-    client_secret: 'eXytPWFfS23UUAkQz8m4WTyu',
-    api_scope: 'https://www.googleapis.com/auth/youtube',
-  });
-
-  var formHandler = {
+var formHandler = {
     numberofLinks: null,
     existingPlaylist: false,
     existingName: '',
@@ -73,13 +68,9 @@
     },
 
     intervalCheck: function intervalCheck(handle, elem) {
-
-      console.log('Running');
       handle.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
       elem.dispatchEvent(handle);
-      console.log(formHandler.pageCount);
       formHandler.pageCount += 1;
-
     },
 
 
@@ -87,9 +78,7 @@
       $('.numThread[value="no"]').click(function() {
         formHandler.threadStart = true;
       });
-
       $('.mbm').click(function() {
-
         if (formHandler.threadFinish === false && formHandler.threadStart === true) {
           $(this).toggleClass('chosenThread');
         }
@@ -98,7 +87,6 @@
       $(document).on('DOMNodeInserted', function(e) {
         if ($(e.target).is('.mbm')) {
           $(e.target).click(function() {
-            console.log(this);
             if (formHandler.threadFinish === false && formHandler.threadStart === true) {
               $(this).toggleClass('chosenThread');
             }
@@ -657,7 +645,7 @@
     }
   };
 
-  var gatherURL = {
+var gatherURL = {
     receivedData: {
       numberofLinks: null,
       existingPlaylist: null,
@@ -881,19 +869,30 @@
       }
     },
   };
-  gatherURL.receivedData.request();
-  var requestInterval;
-  requestInterval = setInterval(function() {
-    if (formHandler.accessToken !== undefined) {
-      console.log(formHandler.accessToken);
-      createPopup.init();
-      formHandler.init();
-      clearInterval(requestInterval);
-    }
 
-  }, 80);
-  setTimeout(function(){
-      window.close();
-  }, 300);
+var google = new OAuth2('google', {
+    client_id: '167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h',
+    client_secret: 'eXytPWFfS23UUAkQz8m4WTyu',
+    api_scope: 'https://www.googleapis.com/auth/youtube',
+  });
 
+var initiator =  {
+  init: function init() {
+    gatherURL.receivedData.request();
+    var requestInterval;
+    requestInterval = setInterval(function() {
+      if (formHandler.accessToken !== undefined) {
+        console.log(formHandler.accessToken);
+        createPopup.init();
+        formHandler.init();
+        clearInterval(requestInterval);
+      }
+    }, 80);
+    setTimeout(function(){
+        window.close();
+    }, 300);
+  }
+};
+
+initiator.init();
 })(jQuery);
