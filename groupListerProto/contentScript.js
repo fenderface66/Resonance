@@ -25,10 +25,13 @@
     init: function() {
       console.log('running insert');
       createPopup.fn.insert();
+      $('.success-message a').click(function() {
+        location.reload();
+      });
     }
   };
 
-var formHandler = {
+  var formHandler = {
     numberofLinks: null,
     existingPlaylist: false,
     existingName: '',
@@ -72,7 +75,6 @@ var formHandler = {
       elem.dispatchEvent(handle);
       formHandler.pageCount += 1;
     },
-
 
     postLister: function postLister() {
       $('.numThread[value="no"]').click(function() {
@@ -140,6 +142,7 @@ var formHandler = {
         formHandler.threadFinish = false;
         $('.popupMain').remove();
         $('.chosenThread').removeClass('chosenThread');
+        location.reload();
       });
     },
 
@@ -152,6 +155,64 @@ var formHandler = {
         $('.popupMain').slideDown('fast');
         $('.popupMinified').hide();
       });
+    },
+
+
+    createPlaylist: function createPlaylist(accessToken) {
+      //make the AJAX request with the given data from the `ajaxes` array of objects
+      console.log(formHandler.newName);
+      var metadata = {
+        snippet: {
+          title: formHandler.newName
+        }
+      };
+      $.ajax({
+        method: "POST",
+        url: "https://www.googleapis.com/youtube/v3/playlists?part=snippet",
+        data: JSON.stringify(metadata),
+        headers: {
+          Authorization: 'Bearer ' + accessToken
+        },
+        contentType: 'application/json',
+      }).done(function(data, textStatus, request) {
+        console.log("Playlist created, data: ", data, request);
+        formHandler.newPlaylistID = data.id;
+        console.log(formHandler.newPlaylistID);
+      });
+    },
+
+    ajaxArray: function ajaxArray(arr, existing) {
+      console.log(formHandler.existingName);
+      var metadata;
+      if (existing === true) {
+        for (var i = 0; i < formHandler.idArray.length; i++) {
+          metadata = {
+            snippet: {
+              playlistId: formHandler.existingName,
+              resourceId: {
+                kind: "youtube#video",
+                videoId: formHandler.idArray[i]
+              },
+            }
+          };
+          arr.push(metadata);
+          console.log(formHandler.idArray[i]);
+        }
+      } else {
+        for (var j = 0; j < formHandler.idArray.length; j++) {
+          metadata = {
+            snippet: {
+              playlistId: formHandler.newPlaylistID,
+              resourceId: {
+                kind: "youtube#video",
+                videoId: formHandler.idArray[j]
+              },
+            }
+          };
+          arr.push(metadata);
+          console.log(formHandler.idArray[j]);
+        }
+      }
     },
 
     init: function init() {
@@ -218,29 +279,7 @@ var formHandler = {
           $('.invalidToken').show();
         }
         var accessToken = formHandler.accessToken;
-
-        (function() {
-          //make the AJAX request with the given data from the `ajaxes` array of objects
-          console.log(formHandler.newName);
-          var metadata = {
-            snippet: {
-              title: formHandler.newName
-            }
-          };
-          $.ajax({
-            method: "POST",
-            url: "https://www.googleapis.com/youtube/v3/playlists?part=snippet",
-            data: JSON.stringify(metadata),
-            headers: {
-              Authorization: 'Bearer ' + accessToken
-            },
-            contentType: 'application/json',
-          }).done(function(data, textStatus, request) {
-            console.log("Playlist created, data: ", data, request);
-            formHandler.newPlaylistID = data.id;
-            console.log(formHandler.newPlaylistID);
-          });
-        })();
+        formHandler.createPlaylist(accessToken);
         if (formHandler.threadCounter === false) {
           gatherURL.regexFunctions.topScroller(formHandler.numberofLinks);
         } else {
@@ -258,11 +297,11 @@ var formHandler = {
               $('.playlistName').text(formHandler.newName);
             } else {
               console.log('here');
-              // $.get("https://www.googleapis.com/youtube/v3/" + "playlists?part=snippet&id=" + formHandler.existingName + "&key=" + 'AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4', function(data) {
-              //   console.log(data);
-              //   $('.playlistName').text(data.items[0].snippet.title);
-              //   console.log(data.items[0].snippet.title);
-              // });
+              $.get("https://www.googleapis.com/youtube/v3/playlists?part=snippet&id=" + formHandler.existingName + "&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4", function(data) {
+                console.log(data);
+                $('.playlistName').text(data.items[0].snippet.title);
+                console.log(data.items[0].snippet.title);
+              });
               if ($('.playlistName').text() === '') {
                 $('.playlistName').text('Set playlist to public to see playlist name');
               }
@@ -461,21 +500,7 @@ var formHandler = {
                                 $('.duplicates-message .all-duplicates').show();
                               } else {
                                 console.log('running do_ajax()');
-                                (function ajaxArray() {
-                                  for (var i = 0; i < formHandler.idArray.length; i++) {
-                                    var metadata = {
-                                      snippet: {
-                                        playlistId: formHandler.existingName,
-                                        resourceId: {
-                                          kind: "youtube#video",
-                                          videoId: formHandler.idArray[i]
-                                        },
-                                      }
-                                    };
-                                    console.log(formHandler.idArray[i]);
-                                    ajaxes.push(metadata);
-                                  }
-                                })();
+                                formHandler.ajaxArray(ajaxes, true);
                                 console.log('doing ajax');
                                 console.log(ajaxes);
                                 formHandler.newLinkNumber = formHandler.idArray.length;
@@ -559,22 +584,7 @@ var formHandler = {
                                 $('.duplicates-message .all-duplicates').show();
                               } else {
                                 console.log('running do_ajax()');
-                                (function ajaxArray() {
-                                  console.log(formHandler.existingName);
-                                  for (var i = 0; i < formHandler.idArray.length; i++) {
-                                    var metadata = {
-                                      snippet: {
-                                        playlistId: formHandler.existingName,
-                                        resourceId: {
-                                          kind: "youtube#video",
-                                          videoId: formHandler.idArray[i]
-                                        },
-                                      }
-                                    };
-                                    console.log(formHandler.idArray[i]);
-                                    ajaxes.push(metadata);
-                                  }
-                                })();
+                                formHandler.ajaxArray(ajaxes, true);
                                 console.log('doing ajax');
                                 console.log(ajaxes);
                                 formHandler.newLinkNumber = formHandler.idArray.length;
@@ -595,21 +605,7 @@ var formHandler = {
                 if (formHandler.existingPlaylist !== true) {
                   console.log('if wins');
                   formHandler.newLinkNumber = formHandler.idArray.length;
-                  (function ajaxArray() {
-                    for (var i = 0; i < formHandler.idArray.length; i++) {
-                      var metadata = {
-                        snippet: {
-                          playlistId: formHandler.newPlaylistID,
-                          resourceId: {
-                            kind: "youtube#video",
-                            videoId: formHandler.idArray[i]
-                          },
-                        }
-                      };
-                      console.log(formHandler.idArray[i]);
-                      ajaxes.push(metadata);
-                    }
-                  })();
+                  formHandler.ajaxArray(ajaxes, false);
                   do_ajax();
                 } else {
                   console.log('else wins');
@@ -619,21 +615,7 @@ var formHandler = {
                     console.log('formHandler.ajaxGetInitialised = ' + formHandler.ajaxGetInitialised);
                   } else {
                     formHandler.newLinkNumber = formHandler.idArray.length;
-                    (function ajaxArray() {
-                      for (var i = 0; i < formHandler.idArray.length; i++) {
-                        var metadata = {
-                          snippet: {
-                            playlistId: formHandler.newPlaylistID,
-                            resourceId: {
-                              kind: "youtube#video",
-                              videoId: formHandler.idArray[i]
-                            },
-                          }
-                        };
-                        console.log(formHandler.idArray[i]);
-                        ajaxes.push(metadata);
-                      }
-                    })();
+                    formHandler.ajaxArray(ajaxes, false);
                     do_ajax();
                   }
                 }
@@ -645,7 +627,7 @@ var formHandler = {
     }
   };
 
-var gatherURL = {
+  var gatherURL = {
     receivedData: {
       numberofLinks: null,
       existingPlaylist: null,
@@ -734,8 +716,6 @@ var gatherURL = {
       },
       extractVideoID: function extractVideoID(url) {
         var matches = url.toString().match("(youtu\.be\\\\?\/|v=)([a-zA-Z0-9\_\-]+)&?");
-        console.log(url);
-        console.log(matches);
         var regExp = '';
         for (var i in matches) {
           if (matches[i].match("^[a-zA-Z0-9\_\-]+$")) {
@@ -790,7 +770,6 @@ var gatherURL = {
                     console.log('This is the iteration we are on: ' + iteration);
                     console.log('This is the length of threads selected: ' + ($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1));
                     if (iteration == ($('#contentCol #contentArea #pagelet_group_ .chosenThread').length - 1)) {
-                      console.log('passed4');
                       var links = gatherURL.videoID.length;
                       console.log('success');
                       if (gatherURL.receivedData.secondRun === true && gatherURL.receivedData.invalidThread > 0 && gatherURL.receivedData.successThread === 0) {
@@ -807,8 +786,7 @@ var gatherURL = {
                       }
                     }
                   }
-                }
-                else {
+                } else {
                   console.log('This is the failed extraction: ' + gatherURL.regexFunctions.extractVideoID(regexItem));
                 }
               }
@@ -870,29 +848,24 @@ var gatherURL = {
     },
   };
 
-var google = new OAuth2('google', {
-    client_id: '167349066843-55nh95ts4k2g3fsfghoriv9a431phj6h',
-    client_secret: 'eXytPWFfS23UUAkQz8m4WTyu',
-    api_scope: 'https://www.googleapis.com/auth/youtube',
-  });
 
-var initiator =  {
-  init: function init() {
-    gatherURL.receivedData.request();
-    var requestInterval;
-    requestInterval = setInterval(function() {
-      if (formHandler.accessToken !== undefined) {
-        console.log(formHandler.accessToken);
-        createPopup.init();
-        formHandler.init();
-        clearInterval(requestInterval);
-      }
-    }, 80);
-    setTimeout(function(){
+  var initiator = {
+    init: function init() {
+      gatherURL.receivedData.request();
+      var requestInterval;
+      requestInterval = setInterval(function() {
+        if (formHandler.accessToken !== undefined) {
+          console.log(formHandler.accessToken);
+          createPopup.init();
+          formHandler.init();
+          clearInterval(requestInterval);
+        }
+      }, 80);
+      setTimeout(function() {
         window.close();
-    }, 300);
-  }
-};
+      }, 300);
+    }
+  };
 
-initiator.init();
+  initiator.init();
 })(jQuery);

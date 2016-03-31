@@ -28,7 +28,7 @@ var initiator = {
 					file: "oauth2/adapters/google.js"
 				});
 				chrome.tabs.executeScript(null, {
-					file: "contentScript.min.js"
+					file: "contentScript.js"
 				});
 				chrome.tabs.insertCSS(null, {
 						file: "popStyle.css"
