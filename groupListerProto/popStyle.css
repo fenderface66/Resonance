@@ -1,3 +1,7 @@
+html {
+  font-weight: 100;
+}
+
 .close, .minify {
   float: right;
   text-decoration: underline;
@@ -93,7 +97,7 @@
 
 .intro-screen img {
   position: absolute;
-  left: 34%;
+  left: 28%;
   top: 44px;
   transition: .1s;
 }
@@ -109,7 +113,7 @@
   transition: .4s;
   position: relative;
   z-index: 999;
-  max-width: 400px;
+  max-width: 260px;
 
 
 }
@@ -200,7 +204,7 @@
   z-index: 0;
   left: 0;
   top: 0;
-  max-width: 500px;
+  max-width: 360px;
   padding: 20px;
   box-sizing: border-box;
 }
@@ -224,12 +228,14 @@
   font-family: 'Open Sans', sans-serif !important;
   color: white ;
   font-weight: 100;
+  text-align: center;
 }
 
 .popupMain fieldset {
   border: 0;
   border-radius: 10px;
   padding-left: 0;
+  padding-right: 0;
 }
 
 .popupMain fieldset >label:first-child {
@@ -241,9 +247,9 @@
 .popupMain select,
 .popupMain legend {
   margin: 4px 0;
-  color: white !important;;
+  
   font-family: 'Open Sans', sans-serif !important;
-  font-weight: 100;
+  
 
 }
 
@@ -252,10 +258,16 @@
   font-size: 16px !important;
   cursor: default;
   display: block;
-
+  color: white !important;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 20px;
 }
 
-.pop
+.popupMain legend {
+  color: white !important;
+  padding-right: 0;
+}
 
 .popupMain label,
 .popupMain select,
@@ -266,6 +278,11 @@
 .popupMain input[type="text"] {
   padding: 5px;
   font-size: 16px;
+}
+
+.popupMain input[type="radio"] {
+  margin-left: 0px;
+  margin-bottom: 10px;
 }
 
 #go {
