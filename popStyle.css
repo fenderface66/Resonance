@@ -1,206 +1,439 @@
-  .popupMain {
-    display: none;
-    position: fixed;
-    background-color: white;
-    z-index: 99999;
-    width: 400px;
-    left: 20px;
-    top: 20px;
-    height: auto;
-  }
+html {
+  font-weight: 100;
+}
 
-  a {
-    color: #0F4DA8;
-  }
+.close, .minify {
+  float: right;
+  text-decoration: underline;
+  color: rgb(65, 65, 65);
+  margin-bottom: 3px;
+  font-size: .6em;
+  position: relative;
+  z-index: 999;
+}
 
-  html {
-    color: #414141;
-  }
+.notLinkThread {
+  display: none;
+}
 
-  body {
-    font-family: "Segoe UI", "Lucida Grande", Tahoma, sans-serif;
-    font-size: 100%;
-    min-width: 300px;
-    padding: 10px;
-    background-color: #FFE600;
-  }
+.minify {
+  margin-right: 10px;
+}
 
-  p {
-    color: #414141;
-  }
+.upload-title h2  {
+  color: #666 !important;
+  font-size: 22px;
+}
 
-  .playlistInfo {
-    width: 400px;
-  }
+.scanInfo h3 {
+  font-size: 18px;
+  margin-top: 10px;
+  color: #666 !important;
+  text-decoration: underline;
+  margin-bottom: 0;
+}
 
-  legend {
-    margin-top: 20px;
-    padding-bottom: 5px;
-    width: 100%;
-    font-size: 1.3em;
-    font-weight: bold;
-  }
+.scanInfo p:first-child {
+  margin-top: 2px;
+}
 
-  fieldset {
-    border: 0;
-    border-radius: 10px;
-    padding-left: 0;
-  }
+.invalidToken {
+  display: none;
+  font-weight: bold;
+}
 
-  fieldset >label:first-child {
-    margin-top: 0px;
-  }
+.popupMinified {
+  position: fixed;
+  right: 5px;
+  top: 50px;
+  display: none;
+  background-color:  #525252;
+  z-index: 9999;
+  border-radius: 10px;
+  transition: .2s;
+}
 
-  label,
-  input,
-  select,
-  legend {
-    margin: 4px 0;
-    color: #414141;
-  }
+.popupMinified a {
+  font-family: sans-serif;
+  padding: 5px 8px;
+  display: block;
+  font-size: .8em;
+  text-decoration: none;
+  color: white !important;
+}
 
-  label {
-    margin-top: 20px;
-  }
+.popupMinified a:hover {
+  text-decoration: none;
+}
 
-  label,
-  select,
-  legend {
-    display: block;
-  }
+.popupMinified:hover {
+  background-color: #E2D55C;
+}
 
-  input[type="text"] {
-    padding: 5px;
-    font-size: 16px;
-  }
+.popupMain {
+  display: none;
+  position: fixed;
+  z-index: 99999;
+  right: 20px;
+  top: 50px;
+  height: auto;
+  font-family: 'Open Sans', sans-serif !important;
+  font-size: 16px;
+  color: white !important;
+  min-width: 340px;
+  /*  Make sure to change the id when pushing to live*/
+  background-image: url(chrome-extension://ieaajkngecebndlnedkhcdpedlfhcdco/guitar-bg.jpg);
+  background-size: cover;
+  max-height: 500px;
+  overflow: hidden;
+  transition: .4s;
 
-  #go {
-    padding: 10px 15px;
-    font-size: 16px;
-    background: white;
-    cursor: pointer;
-    -webkit-border-radius: 5px;
-    border-radius: 5px;
-    margin-top: 20px;
-    width: 62px;
-    border: 1px solid transparent;
-    transition: .2s;
+}
 
-  }
 
-  #go:hover {
-    background-color: #ECE9E9;
-  }
+.popupMain.opened {
+  overflow-y: scroll;
+}
 
-  select {
-    display: block;
-  }
+.intro-screen img {
+  position: absolute;
+  left: 28%;
+  top: 44px;
+  transition: .1s;
+}
 
-  .error-message, .success-message, .all-duplicates, .duplicates-number, .duplicatesAndErrors {
-    display: none;
-    font-weight: bold;
-  }
+.intro-screen img.closed {
+  opacity: 0;
+  z-index: 0;
+}
 
-  .numDuplicates {
-    display: none;
-  }
+.intro-screen {
+  padding: 30px 50px;
+  text-align: center;
+  transition: .4s;
+  position: relative;
+  z-index: 999;
+  max-width: 260px;
 
-  .success-message {
-    color: green;
-  }
 
-  .error-message, .all-duplicates, .duplicatesAndErrors {
-    color: red;
-  }
+}
 
-  .loader-container {
-    margin-top: 20px;
-    width: 300px;
-    border: 1px solid #969696;
-    position: relative;
-    margin-left: -150px;
-    left: 50%;
-    height: auto;
-    box-sizing: border-box;
-    display: none;
-  }
+.intro-screen .text-container {
+  opacity: 0;
+  transition: .4s;
+}
 
-  .loader {
-    background-color: #414141;
-    height: 20px;
-    width: 0px;
-    margin: 2px;
-    box-sizing: border-box;
-  }
+.intro-screen .text-container.open {
+  opacity: 1;
+  position: relative;
+  z-index: 999;
+}
 
-  .failed-uploads {
-    display: none;
-  }
 
-  .scanner-loader-container {
-    width: 100%;
-    text-align: center;
-    display: none;
 
-  }
+.intro-screen .text-container p:first-of-type {
+  font-size: 2.2em;
+  margin-bottom: 0;
+  margin-top: 10px;
+}
 
-  .linkNumber
+.intro-screen .text-container p:nth-of-type(2) {
+  font-size: 1em;
+  margin-top: 10px;
+}
 
-  .scanner-loader {
-    margin: 0 auto;
-    position: relative;
-    left: 0%;
+.intro-screen .text-container a {
+  color: white;
+  font-size: 1em;
+  background-color: black;
+  border: 1px solid white;
+  padding: 5px 14px;
+  position: relative;
+  top: 10px;
+  transition: .4s;
+}
 
-  }
+.intro-screen .text-container a:hover {
+  text-decoration: none;
+  color: #292929;
+  background-color: white;
+}
 
-  .text-container {
+.intro-screen.closed {
+  transform: translateY(-100%);
+}
 
-    position: relative;
-    width: 300px;
-    left: 50%;
-    margin-left: -150px
-  }
+.intro-screen.hidden {
+  display: none;
+}
 
-  .scanInfo {
-    display: none;
-  }
+.popupMain::-webkit-scrollbar { width: 0 !important }
+.popupMain { -ms-overflow-style: none; }
+.popupMain { overflow: -moz-scrollbars-none; }
 
-  .upload-title {
-    display: none;
-  }
+.overlay {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: .6;
+  z-index: 0;
+}
 
-  .explain {
-    display: inline-block;
-    font-size: 1em;
-    font-weight: bold;
-    border: 1px solid #414141;
-    color: #414141  ;
-    border-radius: 50%;
-    padding: 5px 10px;
-    cursor: pointer;
-    margin-left: 3px;
-    position: relative;
-    bottom: 0px;
-  }
+.scanInfo {
+  display: none;
+}
 
-  .explanation {
-    display: none;
-    border-top: 1px solid #414141;
-    border-bottom: 1px solid #414141;
-    margin-top: 14px;
-    padding: 10px 0;
-  }
+.popupMain a {
+  color: white;
+  font-family: 'Open Sans', sans-serif !important;
+}
 
-  .explain-header {
-    text-decoration: underline;
-    font-weight: bold;
-  }
+.popupMain p {
+  color: #414141;
+  font-family: 'Open Sans', sans-serif !important;
+  color: white;
+  font-weight: 100;
+}
 
-  .scan-info h3 {
-    text-decoration: underline;
-  }
-  .invalidPlaylist {
-    color: red;
-    display: none;
-    font-weight: bold;
-  }
+.playlistInfo {
+  z-index: 15;
+  position: absolute;
+  opacity: 0;
+  transition: .4s;
+  z-index: 0;
+  left: 0;
+  top: 0;
+  max-width: 360px;
+  padding: 20px;
+  box-sizing: border-box;
+}
+
+.playlistInfo.opened {
+  opacity: 1;
+  position: relative;
+}
+
+.content-container {
+  padding: 10px;
+  background-color: rgba(0,0,0,.8);
+}
+
+.popupMain legend {
+  margin-top: 20px;
+  padding-bottom: 5px;
+  width: 100%;
+  font-size: 1.3em;
+  font-weight: bold;
+  font-family: 'Open Sans', sans-serif !important;
+  color: white ;
+  font-weight: 100;
+  text-align: center;
+}
+
+.popupMain fieldset {
+  border: 0;
+  border-radius: 10px;
+  padding-left: 0;
+  padding-right: 0;
+}
+
+.popupMain fieldset >label:first-child {
+  margin-top: 0px;
+}
+
+.popupMain label,
+.popupMain input,
+.popupMain select,
+.popupMain legend {
+  margin: 4px 0;
+  
+  font-family: 'Open Sans', sans-serif !important;
+  
+
+}
+
+.popupMain label {
+  margin-top: 20px;
+  font-size: 16px !important;
+  cursor: default;
+  display: block;
+  color: white !important;
+  font-weight: 400;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.popupMain legend {
+  color: white !important;
+  padding-right: 0;
+}
+
+.popupMain label,
+.popupMain select,
+.popupMain legend {
+  display: block;
+}
+
+.popupMain input[type="text"] {
+  padding: 5px;
+  font-size: 16px;
+}
+
+.popupMain input[type="radio"] {
+  margin-left: 0px;
+  margin-bottom: 10px;
+}
+
+#go {
+  color: white;
+  font-size: 1em;
+  background-color: black;
+  border: 1px solid white;
+  padding: 5px 14px;
+  position: relative;
+  top: 10px;
+  transition: .4s;
+  top: 15px;
+  display: inline;
+
+}
+
+#go:hover {
+  text-decoration: none;
+  color: #292929;
+  background-color: white;
+  cursor: pointer;
+}
+
+
+.popupMain select {
+  display: block;
+  margin-bottom: 10px;
+}
+
+.error-message, .success-message, .all-duplicates, .duplicates-number, .duplicatesAndErrors {
+  display: none;
+  font-weight: bold;
+}
+
+.numDuplicates {
+  display: none;
+}
+
+.success-message {
+  color: green;
+}
+
+.error-message, .all-duplicates, .duplicatesAndErrors {
+  color: red;
+}
+
+.loader-container {
+  margin-top: 20px;
+  width: 300px;
+  border: 1px solid #969696;
+  position: relative;
+  margin-left: -150px;
+  left: 50%;
+  height: auto;
+  box-sizing: border-box;
+  display: none;
+}
+
+.loader {
+  background-color: #414141;
+  height: 20px;
+  width: 0px;
+  margin: 2px;
+  box-sizing: border-box;
+}
+
+.failed-uploads {
+  display: none;
+}
+
+.scanner-loader-container {
+  width: 100%;
+  text-align: center;
+  display: none;
+}
+
+.linkNumber
+
+.scanner-loader {
+  margin: 0 auto;
+  position: relative;
+  left: 0%;
+
+}
+
+.scanner-loader-container .text-container {
+
+  position: relative;
+  width: 300px;
+  left: 50%;
+  margin-left: -150px
+}
+
+
+.upload-title {
+  display: none;
+}
+
+.explain {
+  display: inline-block;
+  font-size: 1em;
+  font-weight: bold;
+  border: 1px solid white;
+  color: white;  ;
+  border-radius: 50%;
+  padding: 5px 12px;
+  cursor: pointer;
+  margin-left: 10px;
+  position: relative;
+  bottom: 0px;
+}
+
+.explanation {
+  display: none;
+  border-top: 1px solid white;
+  border-bottom: 1px solid white;
+  margin-top: 14px;
+  padding: 10px 0;
+}
+
+.explain-header {
+  text-decoration: underline;
+  font-weight: bold;
+}
+
+.doneButton {
+  display: inline-block;
+  padding: 10px;
+  width: auto;
+  height: auto;
+  background-color: white;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.chosenThread {
+  border: 4px solid #FFE600 !important;
+}
+
+.doneButton:hover {
+  background-color: #ECE9E9;
+}
+
+.scan-info h3 {
+  text-decoration: underline;
+  font-family: 'lucida grande',tahoma,verdana,arial,sans-serif;
+}
+.invalidPlaylist {
+  color: red;
+  display: none;
+  font-weight: bold;
+}
