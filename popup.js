@@ -40,8 +40,8 @@ var initiator = {
 
 $(document).ready(function () {
 	google.authorize(function () {
+
 		var accessToken = google.getAccessToken();
-		console.log(accessToken);
 		setTimeout(function() {
 			chrome.runtime.onConnect.addListener(function (port) {
 				port.postMessage({
@@ -49,6 +49,7 @@ $(document).ready(function () {
 					accessToken: accessToken,
 				});
 			});
+
 		}, 100);
 
 		chrome.tabs.query({
