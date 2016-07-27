@@ -33,6 +33,9 @@ var initiator = {
 				chrome.tabs.insertCSS(null, {
 						file: "popStyle.css"
 				});
+				chrome.tabs.insertCSS(null, {
+						file: "popStyle.css"
+				});
 			});
 		}
 	},
