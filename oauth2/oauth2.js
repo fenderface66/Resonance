@@ -447,6 +447,7 @@ OAuth2.prototype.authorize = function(callback) {
  * @returns A valid access token.
  */
 OAuth2.prototype.getAccessToken = function() {
+  console.log(this.get('accessToken'));
   return this.get('accessToken');
 };
 
