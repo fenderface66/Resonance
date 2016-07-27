@@ -1,5 +1,4 @@
 html {
-<<<<<<< HEAD
     font-weight: 100;
 }
 
@@ -250,7 +249,6 @@ html {
 
 .popupMain fieldset >label:first-child {
     margin-top: 0px;
-=======
   font-weight: 100;
 }
 
@@ -492,14 +490,13 @@ html {
 
 .popupMain fieldset >label:first-child {
   margin-top: 0px;
->>>>>>> cbd8f178d9936796a5fafc0130acaa8968862573
 }
 
 .popupMain label,
 .popupMain input,
 .popupMain select,
 .popupMain legend {
-<<<<<<< HEAD
+
     margin: 4px 0;
     font-family: 'Open Sans', sans-serif !important;
 }
@@ -515,17 +512,6 @@ html {
     margin-bottom: 20px;
 }
 
-.popupMain legend {
-    color: white !important;
-    padding-right: 0;
-=======
-  margin: 4px 0;
-  
-  font-family: 'Open Sans', sans-serif !important;
-  
-
-}
-
 .popupMain label {
   margin-top: 20px;
   font-size: 16px !important;
@@ -538,15 +524,12 @@ html {
 }
 
 .popupMain legend {
-  color: white !important;
   padding-right: 0;
->>>>>>> cbd8f178d9936796a5fafc0130acaa8968862573
 }
 
 .popupMain label,
 .popupMain select,
 .popupMain legend {
-<<<<<<< HEAD
     display: block;
 }
 
@@ -959,4 +942,3 @@ img.scanner-loader {
   display: none;
   font-weight: bold;
 }
->>>>>>> cbd8f178d9936796a5fafc0130acaa8968862573
