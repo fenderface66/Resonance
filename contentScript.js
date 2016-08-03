@@ -936,12 +936,8 @@
                     createPopup.init();
                     formHandler.init();
                     clearInterval(requestInterval);
-                }
+                } 
             }, 80);
-//Seems to shut down tab
-//            setTimeout(function() {
-//                window.close();
-//            }, 600);
         }
     };
 
