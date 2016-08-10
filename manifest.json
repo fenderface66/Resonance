@@ -1,34 +1,39 @@
 {
-	"manifest_version": 2,
-	"name": "Resonance",
-	"description": "Collect links from facebook group pages and turn or add them to a youtube playlist",
-	"version": "1.4.4",
-	"browser_action": {
-		"default_icon": "icon.png",
-		"default_popup": "popup.html"
-	},
-	"content_scripts": [{
-		"matches": ["http://www.google.com/robots.txt*"],
-		"css" : ["popStyle.css"],
+  "manifest_version": 2,
+  "name": "Resonance",
+  "description": "Collect links from facebook group pages and turn or add them to a youtube playlist",
+  "version": "1.4.5",
+  "browser_action": {
+    "default_icon": "icon.png",
+    "default_popup": "popup.html"
+  },
+
+  "icons": { "16": "icon.png",
+            "48": "icon-large.png",
+            "128": "icon-large.png" },
+
+  "content_scripts": [{
+    "matches": ["http://www.google.com/robots.txt*"],
+    "css" : ["popStyle.css"],
     "run_at": "document_start"
-	}],
-	"permissions": [
-				"identity",
-				"tabs",
-				"storage",
-				"<all_urls>",
-				"http://gdata.youtube.com/",
-        "https://www.googleapis.com/auth/youtube",
-				"https://accounts.google.com/o/oauth2/token"
-			],
+  }],
+  "permissions": [
+    "identity",
+    "tabs",
+    "storage",
+    "<all_urls>",
+    "http://gdata.youtube.com/",
+    "https://www.googleapis.com/auth/youtube",
+    "https://accounts.google.com/o/oauth2/token"
+  ],
   "oauth2": {
     "client_id": "167349066843-a3alf4n9ks954i7ba9ndnfc1q88v7ld7.apps.googleusercontent.com",
     "scopes": [
       "https://www.googleapis.com/auth/youtube"
     ]
   },
-	"web_accessible_resources" : [
+  "web_accessible_resources" : [
     "711.gif", "guitar-bg.jpg", "ajax-loader.gif"
   ],
-	"content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
+  "content_security_policy": "script-src 'self' https://apis.google.com; object-src 'self'"
 }
