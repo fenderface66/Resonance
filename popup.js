@@ -11,7 +11,7 @@ var initiator = {
       $('.error-message').hide();
       chrome.tabs.executeScript(null, {
         file: "jquery-1.11.2.min.js"
-      }, function() {
+      }, function () {
         chrome.tabs.executeScript(null, {
           file: "contentScript.min.js"
         });
@@ -20,25 +20,17 @@ var initiator = {
         });
       });
     }
-  },
+  }
 };
 
-$(document).ready(function() {
-
-  $.ajax({
-    method: "POST",
-    url: "http://139.59.190.164:3000",
-  }).done(function(data, textStatus, request) {
-    console.log('done');
-  });
-
+$(document).ready(function () {
 
   chrome.identity.getAuthToken({
     'interactive': true
-  }, function(token) {
+  }, function (token) {
     var accessToken = token
-    setTimeout(function() {
-      chrome.runtime.onConnect.addListener(function(port) {
+    setTimeout(function () {
+      chrome.runtime.onConnect.addListener(function (port) {
         port.postMessage({
           greeting: 'hello',
           accessToken: accessToken,
@@ -50,7 +42,7 @@ $(document).ready(function() {
     chrome.tabs.query({
       active: true,
       currentWindow: true
-    }, function(tab) {
+    }, function (tab) {
       //Be aware that `tab` is an array of Tabs
       console.log(tab[0].url);
       console.log('working');
