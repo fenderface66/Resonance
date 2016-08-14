@@ -9,7 +9,7 @@
 			$this.data('scrollTimeout', setTimeout(callback, timeout));
 		});
 	};
-
+    //Object for injecting Resonance popup onto Facebook page. 
 	var createPopup = {
 		fn: {
 			insert: function() {
@@ -19,14 +19,14 @@
 			}
 		},
 		init: function() {
-			console.log('running insert');
 			createPopup.fn.insert();
+            //Reload page if user wants to try again (This needs to be replaced)
 			$('.success-message a').click(function() {
 				location.reload();
 			});
 		}
 	};
-
+    //Object for handling form user inputs and preferences
 	var formHandler = {
 		numberofLinks: null,
 		existingPlaylist: false,
@@ -46,6 +46,7 @@
 		threadStart: false,
 		threadFinish: false,
 		pageCount: 0,
+        //Check if Facebook page
 		validFBurl: function validFBurl(enteredURL) {
 			var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
 			if (!enteredURL.match(FBurl)) {
@@ -65,13 +66,13 @@
 				});
 			}
 		},
-
+        //Check if thread has opened up 
 		intervalCheck: function intervalCheck(handle, elem) {
 			handle.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
 			elem.dispatchEvent(handle);
 			formHandler.pageCount += 1;
 		},
-
+        //Allows user to chose threads for extraction by clicking on them. 
 		postLister: function postLister() {
 			$('.numThread[value="no"]').click(function() {
 				formHandler.threadStart = true;
@@ -91,7 +92,7 @@
 					});
 				}
 			});
-
+            //On done click open up threads of chosen posts
 			$('.doneButton').click(function() {
 				formHandler.threadFinish = true;
 				$('.threadNumber').text($('.chosenThread').length);
@@ -191,7 +192,7 @@
 				});
 			});
 		},
-
+        //Close popup on close click
 		popupClose: function() {
 			$('.close').click(function() {
 				formHandler.threadStart = false;
@@ -201,7 +202,7 @@
 				location.reload();
 			});
 		},
-
+        //Minify popup on minify click
 		popupMinify: function() {
 			$('.minify').click(function() {
 				$('.popupMain').slideUp('fast');
@@ -212,7 +213,7 @@
 				$('.popupMinified').hide();
 			});
 		},
-
+        //Run start up screen/animation
 		popupStart: function() {
 			setTimeout(function() {
 				$('.intro-screen > img').addClass('closed');
@@ -230,7 +231,7 @@
 			});
 		},
 
-
+        //Make POST request to google that creates playlist on users account. 
 		createPlaylist: function createPlaylist(accessToken) {
 			//make the AJAX request with the given data from the `ajaxes` array of objects
 			console.log(formHandler.newName);
@@ -253,7 +254,7 @@
 				console.log(formHandler.newPlaylistID);
 			});
 		},
-
+        //Creates array of objects containing video data to be passed into POST request
 		ajaxArray: function ajaxArray(arr, existing) {
 			console.log(formHandler.existingName);
 			var metadata;
@@ -287,7 +288,7 @@
 				}
 			}
 		},
-
+        //Initializer
 		init: function init() {
 			formHandler.postLister();
 			formHandler.popupClose();
@@ -321,10 +322,12 @@
 					$('.linkNumberContainer').slideUp();
 				}
 			});
+            //Opens playlist ID explanation
 			$('.explain').click(function() {
 				console.log('explain clicked');
 				$('.popupMain .explanation').slideToggle();
 			});
+            //On "get music" click begin extraction process.
 			$('#go').on('click', function() {
 				$('.scanner-loader-container').addClass('opened');
 				$('.playlistInfo').addClass('closed');
@@ -365,6 +368,7 @@
 						gatherURL.regexFunctions.findLink();
 					}, 2000);
 				}
+                //Listen for changes to the playlist 
 				chrome.storage.onChanged.addListener(function(changes, namespace) {
 					formHandler.changesCompleted = true;
 					console.log("change received!");
@@ -383,6 +387,7 @@
 								$('.playlistName').text('Set playlist to public to see playlist name');
 							}
 						}
+                        //Get stored data
 						chrome.storage.local.get('value', function(obj) {
 							formHandler.idArray = obj.value[0];
 							formHandler.idLength = formHandler.idArray.length;
@@ -457,7 +462,6 @@
 												errorCount++;
 												$('.plural').hide();
 												$('.failed-uploads').show();
-												// $('.failed-uploads ul').append("<li>" + ajaxes[current]['snippet']['resourceId']['videoId'] + "</li>");
 												$('.failed-uploads .errorNumber').html('<strong>' + errorCount + '</strong>');
 												console.log(formHandler.newLinkNumber);
 												console.log('errors counted: ' + errorCount);
@@ -515,7 +519,7 @@
 										});
 									}
 								}
-
+                                //Allows get process to check the next page of an existing playlist for duplicate links. 
 								function do_ajaxGetNextPage() {
 									console.log('ajaxGet Next page has been initialised');
 									//check to make sure there are more requests to make
@@ -529,7 +533,6 @@
 										contentType: 'application/json',
 									}).done(function(data, textStatus, request) {
 										//increment the `current` counter and recursively call this function again
-
 										console.log('CurrentGet length: ' + currentGet);
 										console.log('formHandler.idLength: ' + formHandler.idLength);
 										console.log(formHandler.originalList);
@@ -538,7 +541,7 @@
 										if (data.items.length > 1) {
 											var found = '';
 											console.log('Existing ID has been pushed to duplicates aray for cross checking: ' + data.items[0].snippet.resourceId.videoId);
-
+                                            
 											for (var i = 0; i < data.items.length; i++) {
 												currentGet++;
 												console.log(data);
@@ -595,7 +598,7 @@
 										console.log('AjaxGetNext is done');
 									});
 								}
-
+                                //Checks for duplicates if user is extracting to an existing playlist. 
 								function do_ajaxGet() {
 									$('.text-container h3').text('Checking existing playlist for duplicates');
 									console.log('ajaxGet has been initialised');
@@ -619,7 +622,6 @@
 										}
 									}).done(function(data, textStatus, request) {
 										//increment the `current` counter and recursively call this function again
-
 										console.log('CurrentGet length: ' + currentGet);
 										console.log('formHandler.idLength: ' + formHandler.idLength);
 										console.log(formHandler.originalList);
@@ -703,7 +705,7 @@
 			});
 		}
 	};
-
+    //Object for extracting links from Facebook Posts/HTML
 	var gatherURL = {
 		receivedData: {
 			numberofLinks: null,
@@ -720,6 +722,7 @@
 			threadCount: 0,
 			secondRun: false,
 			dataStored: false,
+            pageTitle: $("#headerArea h1 a").text(),
 			request: function request() {
 				var port = chrome.runtime.connect({
 					name: "popup.js"
@@ -734,14 +737,15 @@
 
 			}
 		},
+        //Contains videoIDs for sending back to formHandler
 		videoID: [],
 		regexFunctions: {
-
-			chromeStorage: function chromeStorage(idArray, linkLength) {
+            //Sends IDs to formhandler
+			chromeStorage: function chromeStorage(idArray, linkLength, pageName) {
 				setTimeout(function() {
 					console.log('These items will be sent: ' + idArray);
 					chrome.storage.local.set({
-						'value': [idArray, linkLength]
+						'value': [idArray, linkLength, pageName]
 					}, function() {
 						// Notify that we saved.
 						console.log('Settings saved');
@@ -749,7 +753,7 @@
 					});
 				}, 100);
 			},
-
+            //Scrolls down the page until the correct number of links have been extracted. 
 			topScroller: function topScroller(scrollNumber) {
 				if (gatherURL.scrolled === undefined) {
 					console.log('running');
@@ -776,7 +780,7 @@
 							var links = gatherURL.videoID.length;
 							if (gatherURL.arrayCreated === undefined) {
 								gatherURL.receivedData.rrayCreated = true;
-								gatherURL.regexFunctions.chromeStorage(gatherURL.videoID, links);
+								gatherURL.regexFunctions.chromeStorage(gatherURL.videoID, links, gatherURL.receivedData.pageTitle);
 							}
 						}, 5000);
 					} else if (gatherURL.videoID.length == scrollNumber) {
@@ -786,11 +790,12 @@
 						console.log(gatherURL.arrayCreated);
 						if (gatherURL.receivedData.arrayCreated === undefined) {
 							gatherURL.receivedData.rrayCreated = true;
-							gatherURL.regexFunctions.chromeStorage(gatherURL.videoID, links);
+							gatherURL.regexFunctions.chromeStorage(gatherURL.videoID, links, gatherURL.receivedData.pageTitle);
 						}
 					}
 				}, 1000);
 			},
+            //Performs regex on url and extracts the videoID from it. 
 			extractVideoID: function extractVideoID(url) {
 				var matches = url.toString().match("(youtu\.be\\\\?\/|v=)([a-zA-Z0-9\_\-]+)&?");
 				var regExp = '';
@@ -803,7 +808,7 @@
 				var videoID = regExp;
 				return videoID;
 			},
-
+            //Extracts URL from post html
 			anchorExtractor: function anchorExtractor(validator, regexItem, thisKeyword, iteration, linkCount) {
 				console.log('extractor initiated');
 				console.log(validator);
@@ -854,14 +859,12 @@
 											if (gatherURL.receivedData.secondRun === true && gatherURL.receivedData.invalidThread > 0 && gatherURL.receivedData.successThread === 0) {
 												$('.scanner-loader-container').hide();
 												$('.notLinkThread').show();
-												console.log('this one is running');
-												// $('.chosenThread').removeClass('chosenThread');
 											}
 											console.log('arrayCreated: ' + gatherURL.receivedData.arrayCreated);
 											if (gatherURL.receivedData.arrayCreated === false) {
 												gatherURL.receivedData.arrayCreated = true;
 												console.log(gatherURL.videoID);
-												gatherURL.regexFunctions.chromeStorage(gatherURL.videoID, links);
+												gatherURL.regexFunctions.chromeStorage(gatherURL.videoID, links, gatherURL.receivedData.pageTitle);
 											}
 										}
 									}
@@ -875,7 +878,7 @@
 					console.log('linkCount: ' + linkCount);
 				}
 			},
-
+            //Finds the links within each post 
 			findLink: function findLink() {
 				console.log('Is this a threadcounter process: ' + formHandler.threadCounter);
 				if (formHandler.threadCounter === true) {
@@ -927,7 +930,7 @@
 		},
 	};
 
-
+    //Initiates formhandler
 	var initiator = {
 		init: function init() {
 			gatherURL.receivedData.request();
@@ -942,6 +945,6 @@
 			}, 80);
 		}
 	};
-
+    //Initiate Resonance
 	initiator.init();
 })(jQuery);

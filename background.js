@@ -1,17 +1,21 @@
+//Object for establishing GET/POST requests to node server
 var nodeData = {
-
+  //Empty object for delivering POST requests     
   vData: {
 
   },
-
-  getTitle: function getTitle(itemId) {
+  //Gets Data from Youtube with video ID from Resonance. Places received data in vData for POST request
+  getTitle: function getTitle(itemId, group) {
     q = 'https://www.googleapis.com/youtube/v3/videos?id=' + itemId + '&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4&fields=items(snippet)&part=snippet';
-
+    
     $.ajax({
       url: q,
       dataType: "jsonp",
       success: function (data) {
-        nodeData.vData[itemId] = data.items[0].snippet.title;
+        nodeData.vData[itemId] = {
+            title : data.items[0].snippet.title,
+            group : group,
+        };
         console.log(data);
         console.log(name);
         console.log(nodeData.vData);
@@ -23,7 +27,7 @@ var nodeData = {
       }
     });
   },
-
+  //Ajax functions 
   ajaxCall: function ajaxCall(values) {
     console.log('Running post for Node');
     $.ajax({
@@ -43,29 +47,28 @@ var nodeData = {
     });
 
   },
-
+  //Initialize function sets listener on chrome storage and runs ajaxes once storage containes new data.
   init: function init() {
-    console.log('running main');
-
-
     chrome.storage.onChanged.addListener(function (changes, namespace) {
       var dataV;
       console.log('Changed');
       chrome.storage.local.get('value', function (obj) {
         dataV = obj.value[0];
+        group = obj.value[2]
+        console.log(obj);
         for (var i = 0; i < dataV.length; i++) {
-          nodeData.getTitle(dataV[i])
-          
+          nodeData.getTitle(dataV[i], group)
         }
-        //        nodeData.ajaxCall(nodeData.vData);
       });
     });
   }
 }
 
+//Object for initializing Resonance on icon click
 var initiator = {
   newLinkNumber: null,
   accessToken: null,
+  //Check to see if current tab is on Facebook. 
   validFBurl: function validFBurl(enteredURL) {
     var FBurl = /^(http|https)\:\/\/www.facebook.com\/.*/i;
     if (!enteredURL.match(FBurl)) {
@@ -78,7 +81,7 @@ var initiator = {
         file: "jquery-1.11.2.min.js"
       }, function () {
         chrome.tabs.executeScript(null, {
-          file: "contentScript.min.js"
+          file: "contentScript.js"
         });
         chrome.tabs.insertCSS(null, {
           file: "popStyle.css"
@@ -89,15 +92,18 @@ var initiator = {
 };
 
 
-
+//On page load
 $(document).ready(function () {
+  //On icon click
   chrome.browserAction.onClicked.addListener(function (tab) {
     nodeData.vData = {}
+    //Get the authorisation token from Google
     chrome.identity.getAuthToken({
       'interactive': true
     }, function (token) {
       var accessToken = token
       setTimeout(function () {
+        //Send the authorisation token to content script
         chrome.runtime.onConnect.addListener(function (port) {
           port.postMessage({
             greeting: 'hello',
@@ -106,7 +112,7 @@ $(document).ready(function () {
         });
 
       }, 100);
-
+      
       chrome.tabs.query({
         active: true,
         currentWindow: true
@@ -119,7 +125,6 @@ $(document).ready(function () {
 
     });
   });
-
-  console.log('running doc');
+  //Initialize node object
   nodeData.init();
 })
