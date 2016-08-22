@@ -12,7 +12,8 @@ var nodeData = {
       url: q,
       dataType: "jsonp",
       success: function (data) {
-        nodeData.vData[itemId] = {
+        nodeData.vData = {
+            id: itemId,
             title : data.items[0].snippet.title,
             group : group,
         };
@@ -81,7 +82,7 @@ var initiator = {
         file: "jquery-1.11.2.min.js"
       }, function () {
         chrome.tabs.executeScript(null, {
-          file: "contentScript.js"
+          file: "contentScript.min.js"
         });
         chrome.tabs.insertCSS(null, {
           file: "popStyle.css"
