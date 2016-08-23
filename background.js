@@ -68,7 +68,7 @@ var nodeData = {
         url: q,
         dataType: "jsonp",
         success: function (data) {
-          nodeData.gData.push(data.items);
+          nodeData.gData.push([data.items, itemId]);
           console.log(nodeData.gData.length);
           if (nodeData.gData.length === 9) {
             nodeData.chromeStorage(nodeData.gData)
