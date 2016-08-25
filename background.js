@@ -68,10 +68,10 @@ var nodeData = {
     nodeData.gData.sort(function(a, b) {
       return a.count - b.count;
     });
-    
+
     nodeData.gData.reverse();
     nodeData.chromeStorage(nodeData.gData)
-    
+
   },
 
   getYoutubeInfo: function getYoutubeInfo(itemId) {
@@ -168,6 +168,12 @@ var initiator = {
 $(document).ready(function () {
   //On icon click
   chrome.browserAction.onClicked.addListener(function (tab) {
+    chrome.storage.local.clear(function () {
+      var error = chrome.runtime.lastError;
+      if (error) {
+        console.error(error);
+      }
+    });
     nodeData.vData = {}
     //Get the authorisation token from Google
     chrome.identity.getAuthToken({
