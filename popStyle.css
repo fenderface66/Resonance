@@ -836,6 +836,15 @@ img.scanner-loader {
     font-family: "Open Sans", sans-serif;
 }
 
+.stats.open a {
+    visibility: visible;
+    opacity: 1;
+}
+.stats a {
+    visibility: hidden;
+    opacity: 0;
+}
+
 .stats img {
     display: none;
 }
@@ -857,4 +866,12 @@ img.scanner-loader {
 #stat-list {
     text-align: center;
     padding: 0px 34px;
+}
+
+.stats ol#stat-list {
+    visibility: hidden;
+}
+
+.stats.open ol#stat-list {
+    visibility: visible;
 }
