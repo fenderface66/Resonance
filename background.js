@@ -64,7 +64,7 @@ var nodeData = {
       console.log("GET Finished");
       console.log(data);
       for (var i = 0; i < data.length; i++) {
-        nodeData.getYoutubeInfo(data[i]);
+        nodeData.getYoutubeInfo(data[i], true);
       }
     });
   },
@@ -81,37 +81,67 @@ var nodeData = {
     });
 
     nodeData.gData.reverse();
-    nodeData.chromeStorage(nodeData.gData, 'stats')
+    nodeData.chromeStorage(nodeData.gData)
+    nodeData.getRecent();
 
   },
 
   getYoutubeInfo: function getYoutubeInfo(itemId, recent) {
+    var id; 
+    if (recent === true) {
+      id = itemId.id;
+    } else {
+      id = itemId._id;
+    }
+    
     var itemDetails = [];
     if (itemId !== null) {
-      q = 'https://www.googleapis.com/youtube/v3/videos?id=' + itemId._id + '&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4&fields=items(snippet)&part=snippet';
+      q = 'https://www.googleapis.com/youtube/v3/videos?id=' + id + '&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4&fields=items(snippet)&part=snippet';
 
       $.ajax({
         url: q,
         dataType: "jsonp",
         success: function (data) {
 
-          if (recent === false) {
+          if (recent !== true) {
             nodeData.gData.push({
               youData: data.items,
               itemID: itemId._id,
               count: itemId.count
             });
+            
             if (nodeData.gData.length === 101) {
               nodeData.ordinalData();
             }
+            
           } else {
-            nodeData.gData = {};
+            console.log("running else");
+            
+            if (nodeData.recent === undefined) {
+              console.log('running');
+              nodeData.gData = [];
+            } 
+            
+            nodeData.recent = true;
+
             nodeData.gData.push({
               youData: data.items,
-              itemID: itemId._id,
+              itemID: id,
             });
-          }
+            
+            if (nodeData.gData.length === 100) {
+              console.log('here');
+              setTimeout(function () {
+                chrome.storage.local.set({
+                  'recent': nodeData.gData
+                }, function () {
+                  // Notify that we saved.
+                  console.log('Settings saved');
 
+                });
+              }, 100);
+            }
+          }
         },
         error: function (jqXHR, textStatus, errorThrown) {
           alert(textStatus, +' | ' + errorThrown);
@@ -124,10 +154,11 @@ var nodeData = {
     console.log("running storage");
     setTimeout(function () {
       chrome.storage.local.set({
-        variable: gData
+        'stats': gData
       }, function () {
         // Notify that we saved.
         console.log('Settings saved');
+
       });
     }, 100);
   },
@@ -135,19 +166,20 @@ var nodeData = {
   //Initialize function sets listener on chrome storage and runs ajaxes once storage containes new data.
   init: function init() {
 
-
-
     chrome.storage.onChanged.addListener(function (changes, namespace) {
       var dataV;
       console.log('Changed');
       chrome.storage.local.get('value', function (obj) {
         console.log(obj);
-        dataV = obj.value[0];
-        group = obj.value[2]
-        console.log(obj);
-        for (var i = 0; i < dataV.length; i++) {
-          nodeData.getTitle(dataV[i], group)
+        if (!jQuery.isEmptyObject(obj)) {
+          dataV = obj.value[0];
+          group = obj.value[2];
+          console.log(obj);
+          for (var i = 0; i < dataV.length; i++) {
+            nodeData.getTitle(dataV[i], group)
+          }
         }
+
       });
     });
   }
@@ -167,7 +199,6 @@ var initiator = {
     } else {
       nodeData.gData = [];
       nodeData.getTop();
-      nodeData.getRecent();
       console.log('success');
       $('.error-message').hide();
       chrome.tabs.executeScript(null, {
@@ -196,6 +227,7 @@ $(document).ready(function () {
         console.error(error);
       }
     });
+    nodeData.recent = undefined;
     nodeData.vData = {}
     //Get the authorisation token from Google
     chrome.identity.getAuthToken({
