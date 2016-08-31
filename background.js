@@ -44,7 +44,7 @@ var nodeData = {
     });
   },
 
-  getTop: function getTop(amount) {
+  getTop: function getTop() {
     $.ajax({
       method: "GET",
       url: "http://139.59.190.164:3000/top",
@@ -53,8 +53,19 @@ var nodeData = {
       for (var i = 0; i < data.length; i++) {
         nodeData.getYoutubeInfo(data[i]);
       }
+    });
+  },
 
-
+  getRecent: function getRecent() {
+    $.ajax({
+      method: "GET",
+      url: "http://139.59.190.164:3000/recent",
+    }).done(function (data, textStatus, request) {
+      console.log("GET Finished");
+      console.log(data);
+      for (var i = 0; i < data.length; i++) {
+        nodeData.getYoutubeInfo(data[i]);
+      }
     });
   },
 
@@ -70,11 +81,11 @@ var nodeData = {
     });
 
     nodeData.gData.reverse();
-    nodeData.chromeStorage(nodeData.gData)
+    nodeData.chromeStorage(nodeData.gData, 'stats')
 
   },
 
-  getYoutubeInfo: function getYoutubeInfo(itemId) {
+  getYoutubeInfo: function getYoutubeInfo(itemId, recent) {
     var itemDetails = [];
     if (itemId !== null) {
       q = 'https://www.googleapis.com/youtube/v3/videos?id=' + itemId._id + '&key=AIzaSyBHRUtsTAr8xvNdUdXYkydgKxo6yGWkgq4&fields=items(snippet)&part=snippet';
@@ -83,14 +94,24 @@ var nodeData = {
         url: q,
         dataType: "jsonp",
         success: function (data) {
-          nodeData.gData.push({
-            youData: data.items,
-            itemID: itemId._id,
-            count: itemId.count
-          });
-          if (nodeData.gData.length === 101) {
-            nodeData.ordinalData();
+
+          if (recent === false) {
+            nodeData.gData.push({
+              youData: data.items,
+              itemID: itemId._id,
+              count: itemId.count
+            });
+            if (nodeData.gData.length === 101) {
+              nodeData.ordinalData();
+            }
+          } else {
+            nodeData.gData = {};
+            nodeData.gData.push({
+              youData: data.items,
+              itemID: itemId._id,
+            });
           }
+
         },
         error: function (jqXHR, textStatus, errorThrown) {
           alert(textStatus, +' | ' + errorThrown);
@@ -99,11 +120,11 @@ var nodeData = {
     } 
   },
 
-  chromeStorage: function chromeStorage(gData) {
+  chromeStorage: function chromeStorage(gData, variable) {
     console.log("running storage");
     setTimeout(function () {
       chrome.storage.local.set({
-        'stats': gData
+        variable: gData
       }, function () {
         // Notify that we saved.
         console.log('Settings saved');
@@ -146,13 +167,14 @@ var initiator = {
     } else {
       nodeData.gData = [];
       nodeData.getTop();
+      nodeData.getRecent();
       console.log('success');
       $('.error-message').hide();
       chrome.tabs.executeScript(null, {
         file: "jquery-1.11.2.min.js"
       }, function () {
         chrome.tabs.executeScript(null, {
-          file: "contentScript.min.js"
+          file: "contentScript.js"
         });
         chrome.tabs.insertCSS(null, {
           file: "popStyle.css"
