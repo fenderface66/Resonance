@@ -205,7 +205,7 @@ var initiator = {
         file: "jquery-1.11.2.min.js"
       }, function () {
         chrome.tabs.executeScript(null, {
-          file: "contentScript.js"
+          file: "contentScript.min.js"
         });
         chrome.tabs.insertCSS(null, {
           file: "popStyle.css"
