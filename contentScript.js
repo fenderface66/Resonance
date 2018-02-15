@@ -9,13 +9,13 @@
       $this.data('scrollTimeout', setTimeout(callback, timeout));
     });
   };
-  //Object for injecting Resonance popup onto Facebook page. 
+  //Object for injecting Resonance popup onto Facebook page.
   var createPopup = {
     fn: {
       insert: function insert() {
         $('#facebook').prepend('<link href="https://fonts.googleapis.com/css?family=Open+Sans:300,600,400" rel="stylesheet" type="text/css"><div class="popupMinified"><a class="open">Open</a></div><div class="statsTab stat-info tab"><p>Top 100</p></div><div class="recentTab recent-info tab"><p>Recent 100</p></div><div class="popupMain"></div><div class="stats stat-info"><ol id="stat-list"></ol></div><div class="recent recent-info"><ol id="recent-list"></ol></div>');
 
-        $('.popupMain').fadeIn().prepend('<div class="content-container"> <a class="close">Close</a><a class="minify">Minify</a> <div class="intro-screen"> <img src="chrome-extension://pahaeemkffdhpnhabiidgpjpggdiadpj/ajax-loader.gif"/> <div class="text-container"> <p>Resonance</p><p>Grab the best tracks from Facebook &amp; put them directly into your Youtube</p><a class="starter">Get Started</a> </div></div><div class="invalidToken"> <p>It looks like something went wrong with accessing Youtube, this sometimes happens, please refresh and try again</p></div><div class="notLinkThread"> <p>It looks like the thread(s) you selected contain(s) no youtube links</p></div><div class="scanner-loader-container"> <div class="text-container"> <h3>Now scanning page for links</h3> <p>If you&rsquo;ve selected 100 or above links this may take a minute or two</p><p>Please refrain from clicking on the page or changing tabs whilst this is happening</p></div><img class="scanner-loader" src="chrome-extension://pahaeemkffdhpnhabiidgpjpggdiadpj/ajax-loader.gif"/> </div><form class="playlistInfo"> <legend>Please Select Resonance Preferences</legend> <fieldset> <label>Would you like to put these songs into an existing playlist or a newly created one?</label> <input class="existingPlaylist" type="radio" name="existingPlaylist" value="yes"> Existing Playlist <br><input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> New Playlist <br><div class="existing"> <label for="oldPlaylist">What is the ID of this playlist?</label> <input name="oldPlaylist" type="text" / placeholder="Playlist ID"><span class="explain">?</span> <div class="explanation"> <p>You can find your playlist ID by going to the playlist page on youtube and extracting it from the url</p><p><span class="explain-header">Example</span> <br><br>https://www.youtube.com/playlist?list=<strong>PLLE1K_p2t-JKUfeaaPCXqu8idT3wsOv4C</strong></p><p>The part in bold is your playlist ID</p>If this playlist is private its name will not appear in the upload info. It will however still have the links uploaded to it</p></div></div><div class="new"> <label for="playlistName">Name of new playlist</label> <input name="playlistName" type="text" / placeholder="Music Playlist"> </div><label>Would you like to extract links by number, thread or from the Resonance top 100?</label> <input class="numThread" type="radio" name="numThread" value="yes"> Number <br><input class="numThread" type="radio" name="numThread" value="no"> Thread <br><input class="numThread" type="radio" name="numThread" value="topSongs"> Resonance 100 <br><div class="linkNumberContainer"> <label for="linkNumber">How many links would you like to add</label> <select name="linkNumber"> <option>5</option> <option>10</option> <option>20</option> <option>30</option> <option>40</option> <option>50</option> <option>60</option> <option>70</option> <option>80</option> <option>90</option> <option>100</option> <option>200</option> </select> </div><div class="threadCollecter"> <p>Please click on the posts you would like to extract links from. When you are finished click done</p><p>Number of threads: <span class="threadNumber">Click done to see how many threads you have selected.</span></p><div class="doneButton">Done</div></div><div class="topSongs"> <p>This will take either the top 100 or the most recent 100 tracks that users have extracted using Resonance and place them into a playlist for you. You can see what these songs are be clicking on the "Top 100" or "Recent 100" tab on the top left of this window.</p><input class="resonanceTracks" type="radio" name="topRes" value="Top"> Top 100 <br><input class="resonanceTracks" type="radio" name="topRes" value="Recent"> Recent 100 <br></div><div id="go">Get Your Music</div></fieldset> </form><div class="finish-screen"> <div class="upload-title"> <h2>Uploading Links to Youtube</h2> </div><div class="loader-container"> <div class="loader loader-running"></div></div><div class="scanInfo"> <h3>Info</h3> <p><strong>Playlist Name: </strong><span class="playlistName"></span> <p> <p><strong>Links to be added: </strong><span class="linkNumber"></span> <p> </div><div class="failed-uploads"> <p><span class="errorNumber"></span> video<span class="plural">s</span><span class="plural2"> is</span> invalid and <span class="plural3">has</span> not been uploaded</p></div><p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p><div class="duplicates-message"> <p class="all-duplicates">It appears that all the links you tried to add already exist in this playlist <p> <p class="duplicatesAndErrors">It appears that all the links you tried to add either already exist in this playlist or were invalid links</p><p class="numDuplicates"><span class="duplicates-number"></span> duplicate<span class="plural5">s </span>have been found</p></div><p class="invalidPlaylist">The playlist id you gave seems to be invalid please make sure you have entered it correctly. Refresh and try again</p><div class="success-message"> <p>Congratulations! Your playlist is now ready for you</p><a target="_blank" href="">Go to Playlist</a> </div></div></div>');
+        $('.popupMain').fadeIn().prepend('<div class="content-container"> <a class="close">Close</a><a class="minify">Minify</a> <div class="intro-screen"> <img src="chrome-extension://pahaeemkffdhpnhabiidgpjpggdiadpj/ajax-loader.gif"/> <div class="text-container"> <p>Resonance</p><p>Grab the best tracks from Facebook &amp; put them directly into your Youtube</p><a class="starter">Get Started</a> </div></div><div class="invalidToken"> <p>It looks like something went wrong with accessing Youtube, this sometimes happens, please refresh and try again</p></div><div class="notLinkThread"> <p>It looks like the thread(s) you selected contain(s) no youtube links</p></div><div class="scanner-loader-container"> <div class="text-container"> <h3>Now scanning page for links</h3> <p>If you&rsquo;ve selected 100 or above links this may take a minute or two</p><p>Please refrain from clicking on the page or changing tabs whilst this is happening</p></div><img class="scanner-loader" src="chrome-extension://pahaeemkffdhpnhabiidgpjpggdiadpj/ajax-loader.gif"/> </div><form class="playlistInfo"> <legend>Please Select Resonance Preferences</legend> <fieldset> <label>Would you like to put these songs into an existing playlist or a newly created one?</label> <input class="existingPlaylist" type="radio" name="existingPlaylist" value="yes"> Existing Playlist <br><input class="existingPlaylist" type="radio" name="existingPlaylist" value="no"> New Playlist <br><div class="existing"> <label for="oldPlaylist">What is the ID of this playlist?</label> <input name="oldPlaylist" type="text" / placeholder="Playlist ID"><span class="explain">?</span> <div class="explanation"> <p>You can find your playlist ID by going to the playlist page on youtube and extracting it from the url</p><p><span class="explain-header">Example</span> <br><br>https://www.youtube.com/playlist?list=<strong>PLLE1K_p2t-JKUfeaaPCXqu8idT3wsOv4C</strong></p><p>The part in bold is your playlist ID</p>If this playlist is private its name will not appear in the upload info. It will however still have the links uploaded to it</p></div></div><div class="new"> <label for="playlistName">Name of new playlist</label> <input name="playlistName" type="text" / placeholder="Music Playlist"> </div><label>Would you like to extract links by number, thread or from the Resonance top 100?</label> <input class="numThread" type="radio" name="numThread" value="yes"> Number <br><input class="numThread" type="radio" name="numThread" value="no"> Thread <br><div class="linkNumberContainer"> <label for="linkNumber">How many links would you like to add</label> <select name="linkNumber"> <option>5</option> <option>10</option> <option>20</option> <option>30</option> <option>40</option> <option>50</option> <option>60</option> <option>70</option> <option>80</option> <option>90</option> <option>100</option> <option>200</option> </select> </div><div class="threadCollecter"> <p>Please click on the posts you would like to extract links from. When you are finished click done</p><p>Number of threads: <span class="threadNumber">Click done to see how many threads you have selected.</span></p><div class="doneButton">Done</div></div><div class="topSongs"> <p>This will take either the top 100 or the most recent 100 tracks that users have extracted using Resonance and place them into a playlist for you. You can see what these songs are be clicking on the "Top 100" or "Recent 100" tab on the top left of this window.</p><input class="resonanceTracks" type="radio" name="topRes" value="Top"> Top 100 <br><input class="resonanceTracks" type="radio" name="topRes" value="Recent"> Recent 100 <br></div><div id="go">Get Your Music</div></fieldset> </form><div class="finish-screen"> <div class="upload-title"> <h2>Uploading Links to Youtube</h2> </div><div class="loader-container"> <div class="loader loader-running"></div></div><div class="scanInfo"> <h3>Info</h3> <p><strong>Playlist Name: </strong><span class="playlistName"></span> <p> <p><strong>Links to be added: </strong><span class="linkNumber"></span> <p> </div><div class="failed-uploads"> <p><span class="errorNumber"></span> video<span class="plural">s</span><span class="plural2"> is</span> invalid and <span class="plural3">has</span> not been uploaded</p></div><p class="error-message">Oops, please make sure you are on a facebook group page before clicking GO</p><div class="duplicates-message"> <p class="all-duplicates">It appears that all the links you tried to add already exist in this playlist <p> <p class="duplicatesAndErrors">It appears that all the links you tried to add either already exist in this playlist or were invalid links</p><p class="numDuplicates"><span class="duplicates-number"></span> duplicate<span class="plural5">s </span>have been found</p></div><p class="invalidPlaylist">The playlist id you gave seems to be invalid please make sure you have entered it correctly. Refresh and try again</p><div class="success-message"> <p>Congratulations! Your playlist is now ready for you</p><a target="_blank" href="">Go to Playlist</a> </div></div></div>');
       },
 
       insertStats: function insertStats(obj, stats) {
@@ -62,13 +62,13 @@
     threadFinish: false,
     pageCount: 0,
     pages: 0,
-    //Check if thread has opened up 
+    //Check if thread has opened up
     intervalCheck: function intervalCheck(handle, elem) {
       handle.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
       elem.dispatchEvent(handle);
       formHandler.pageCount += 1;
     },
-    //Allows user to chose threads for extraction by clicking on them. 
+    //Allows user to chose threads for extraction by clicking on them.
     postLister: function postLister() {
       $('.numThread[value="no"]').click(function () {
         formHandler.threadStart = true;
@@ -236,7 +236,7 @@
       });
     },
 
-    //Make POST request to google that creates playlist on users account. 
+    //Make POST request to google that creates playlist on users account.
     createPlaylist: function createPlaylist(accessToken) {
       //make the AJAX request with the given data from the `ajaxes` array of objects
       console.log(formHandler.newName);
@@ -411,7 +411,7 @@
             gatherURL.regexFunctions.findLink();
           }, 2000);
         } else if (formHandler.threadCounter === undefined) {
-          var arr; 
+          var arr;
           var idArr = [];
           if ($('.resonanceTracks[value="Top"]').is(":checked")) {
 
@@ -437,7 +437,7 @@
 
           console.log(idArr);
         }
-        //Listen for changes to the playlist 
+        //Listen for changes to the playlist
         chrome.storage.onChanged.addListener(function (changes, namespace) {
           formHandler.changesCompleted = true;
           console.log("change received!");
@@ -589,7 +589,7 @@
                     });
                   }
                 }
-                //Allows get process to check the next page of an existing playlist for duplicate links. 
+                //Allows get process to check the next page of an existing playlist for duplicate links.
                 function do_ajaxGetNextPage() {
                   console.log('ajaxGet Next page has been initialised');
                   console.log(formHandler.nextPageToken);
@@ -679,7 +679,7 @@
                     console.log('AjaxGetNext is done');
                   });
                 }
-                //Checks for duplicates if user is extracting to an existing playlist. 
+                //Checks for duplicates if user is extracting to an existing playlist.
                 function do_ajaxGet() {
                   $('.text-container h3').text('Checking existing playlist for duplicates');
                   console.log('ajaxGet has been initialised');
@@ -842,7 +842,7 @@
           });
         }, 100);
       },
-      //Scrolls down the page until the correct number of links have been extracted. 
+      //Scrolls down the page until the correct number of links have been extracted.
       topScroller: function topScroller(scrollNumber) {
         if (gatherURL.scrolled === undefined) {
           console.log('running');
@@ -883,7 +883,7 @@
           }
         }, 1000);
       },
-      //Performs regex on url and extracts the videoID from it. 
+      //Performs regex on url and extracts the videoID from it.
       extractVideoID: function extractVideoID(url) {
         var matches = url.toString().match("(youtu\.be\\\\?\/|v=)([a-zA-Z0-9\_\-]+)&?");
         var regExp = '';
@@ -901,13 +901,11 @@
         console.log('extractor initiated');
         console.log(validator);
         if (validator === '') {
-          console.log('if1 passed');
           gatherURL.receivedData.invalidThread += 1;
           console.log(gatherURL.receivedData.invalidThread);
           if (gatherURL.receivedData.invalidThread > 1) {
             console.log('errorCount: ' + gatherURL.receivedData.invalidThread);
             console.log('iteration: ' + iteration);
-            console.log('if2 passed');
           }
         } else {
           gatherURL.receivedData.successThread += 1;
@@ -966,7 +964,7 @@
           console.log('linkCount: ' + linkCount);
         }
       },
-      //Finds the links within each post 
+      //Finds the links within each post
       findLink: function findLink() {
         console.log('Is this a threadcounter process: ' + formHandler.threadCounter);
         if (formHandler.threadCounter === true) {
@@ -975,8 +973,10 @@
           console.log($('.chosenThread').length);
           $('#contentCol #contentArea .chosenThread').each(function (i) {
             console.log('activating function inside of chosen thread');
-            var youtubeLink = $(this).find('._6m3 .mbs').html();
-            var checkYoutube = $(this).find('._6m3 ._59tj ._6lz').text();
+            var youtubeLink = $(this).find('.userContentWrapper .mtm').html();
+            var checkYoutube = $(this).find('.userContentWrapper .mtm ._59tj ._6lz').text();
+            console.log(youtubeLink);
+            console.log(checkYoutube);
             var iterator = gatherURL.receivedData.threadCount;
             var linkCount;
             gatherURL.receivedData.threadCount += 1;
@@ -991,7 +991,7 @@
             gatherURL.regexFunctions.anchorExtractor(checkYoutube, youtubeLink, this, iterator, linkCount);
             $(this).find('.UFICommentContent').each(function (j) {
               var checkYoutube = $(this).find('._3-8y ._6m3 ._59tj ._6lz').text();
-              var youtubeLink = $(this).find('._6m3 .mbs').html();
+              var youtubeLink = $(this).find('.UFICommentBody a').html();
               if (j === 0) {
                 gatherURL.receivedData.extractorIteration += (j + 1);
               } else {
